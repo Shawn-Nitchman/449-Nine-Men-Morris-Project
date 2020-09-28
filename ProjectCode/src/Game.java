@@ -4,7 +4,8 @@ import java.util.*;
 public abstract class Game {
     public static Object Gameplay;
 
-    HashMap<Player, Piece> playerMap;
+    HashMap<Player, ArrayList<Piece>> playerMap;
+
 
 
     //public abstract boolean isIntersection(Point pair);
