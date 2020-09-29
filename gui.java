@@ -1,6 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
-public class gui {
+public class Gui {
 	public static void main(String args []) {
 
 		createAndShowGui();
@@ -53,6 +53,7 @@ class GridSpace extends JPanel {
 	private boolean isValidSpace;
 	private int x;
 	private int y;
+	//add pair for valid space position
 	
 	//This takes the value of x (should be 1-7) and adds it to 96
 	//to get the ascii value of a-g
