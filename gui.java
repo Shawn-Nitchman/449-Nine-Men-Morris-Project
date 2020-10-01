@@ -1,5 +1,7 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
+
 public class Gui {
 	public static void main(String args []) {
 
@@ -21,7 +23,8 @@ public class Gui {
 		}
 		
 		//Sets the size of the frame
-		Dimension frameDimension = new Dimension(700, 700);
+		Dimension frameDimension = new Dimension(400, 400);
+		//Note: Adjust this to be more dynamic
 		
 		//creates a grid of 7x7 for the frame
 		GridLayout gameGrid = new GridLayout(7,7);
@@ -54,6 +57,7 @@ class GridSpace extends JPanel {
 	private int x;
 	private int y;
 	//add pair for valid space position
+	//add game object to interact with the back end
 	
 	//This takes the value of x (should be 1-7) and adds it to 96
 	//to get the ascii value of a-g
@@ -103,17 +107,35 @@ class GridSpace extends JPanel {
 		}
 	}
 	
+	//This is essentially the button that is the clickable spaces on the board
+	//When clicked, it marks the space with an X
+	//In the future, it will need to be able to tell whether the player
+	//is white or black, and when clicked, will mark with a W or B
+	class ValidSpace extends JButton {
+		public ValidSpace(){
+			setText("O");
+			this.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					setText("X");
+				}
+			});
+
+		}
+	}
+	
 	//This is the constructor that takes in the integer coordinates
 	//Then, it checks if it is valid and stores that in the GridSpace object
 	//And if it is valid, appropriately marks it.
 	public GridSpace(int x, int y) {
 		this.isValidSpace = checkValidSpace(x, y);
 		if(isValidSpace == true) {
-			add(new JLabel("O"));
+			add(new ValidSpace());
 		}
 		else {
 			add(new JLabel(""));
 		}
+
 	}
 	
 }
