@@ -6,8 +6,6 @@ public abstract class Game {
 
     HashMap<Player, ArrayList<Piece>> playerMap;
 
-
-
     //public abstract boolean isIntersection(Point pair);
 
 
