@@ -1,119 +1,110 @@
-import java.awt.*;
-import javax.swing.*;
-public class gui {
+package sample;
 
-	public static void main(String args []) {
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.*;
+import javafx.scene.Scene;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
-		createAndShowGui();
-		
-	}
-	
-	private static void createAndShowGui() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (UnsupportedLookAndFeelException e) {
-		}
-		catch (ClassNotFoundException e) {
-		}
-		catch(InstantiationException e) {
-		}
-		catch(IllegalAccessException e) {
-		}
+public class Main extends Application{
 
-		//Sets the size of the frame
-		Dimension frameDimension = new Dimension(700, 700);
+    private char currentPlayer = 'w';
+    private Cell[][] cell = new Cell[7][7];
 
-		//creates a grid of 7x7 for the frame
-		GridLayout gameGrid = new GridLayout(7,7);
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        primaryStage.setTitle("9 Men Morris");
 
-		//This creates the frame which is the window of the GUI
-		//Including the default close operation and the size
-		JFrame frame = new JFrame("Nine Men's Morris");
-		frame.setLayout(gameGrid);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setPreferredSize(frameDimension);
+        BorderPane border = new BorderPane();
+        VBox player1 = addVBox("Player1");
+        VBox player2 = addVBox("Player2");
+        GridPane gridpane = addGridPane();
+
+        border.setLeft(player1);
+        border.setCenter(gridpane);
+        border.setRight(player2);
+
+        Scene scene = new Scene(border, 750, 750);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+    }
+
+    public VBox addVBox(String name) {
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.TOP_CENTER);
+        vbox.setSpacing(8);
+
+        Text title = new Text(name);
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        vbox.getChildren().add(title);
+
+        for (int i = 1; i <= 9; i++){
+            Text piece = new Text("Piece " + i);
+            VBox.setMargin(piece, new Insets(0,0,0,8));
+            vbox.getChildren().add(piece);
+        }
+        return vbox;
+    }
+
+    public GridPane addGridPane() {
+        GridPane gridpane = new GridPane();
+
+        for(int i = 0; i < 7; i++){
+            for(int j = 0; j < 7; j++){
+                cell[i][j] =  new Cell();
+                gridpane.add(cell[i][j], j , i);
+            }
+
+        }
+
+        return gridpane;
+    }
+
+    public class Cell extends Pane {
+        private char player = ' ';
+
+        public Cell(){
+            setStyle("-fx-border-color : black");
+            this.setPrefSize(150,150);
+            this.setOnMouseClicked(e -> handleClick());
+        }
+
+        private void handleClick(){
+            System.out.println("clicked");
+            if(player == ' ' && currentPlayer != ' '){
+                setPlayer(currentPlayer);
+                currentPlayer = (currentPlayer == 'W') ? 'B' : 'W';
+            }
+        }
+
+        public char getPlayer(){
+            return player;
+        }
+
+        public void setPlayer(char c){
+            player = c;
+
+            if(player == 'W'){
+                Text poop = new Text("White");
+                getChildren().add(poop);
+
+            } else if(player == 'B'){
+                Text pee = new Text("Black");
+                getChildren().add(pee);
+            }
+
+        }
+    }
 
 
-		//Creates a 7x7 array of all the grid spaces and adds them to the frame
-		GridSpace[][] gridSpace = new GridSpace[7][7];
-		for (int ix = 1; ix < 8; ix++) {
-			for (int iy = 1; iy < 8; iy++) {
-				gridSpace[ix-1][iy-1] = new GridSpace(ix, iy);
-				frame.add(gridSpace[ix-1][iy-1]);
-			}
-		}
 
-		frame.pack();
-		frame.setLocationRelativeTo(null); //centers the app when it opens
-		frame.setVisible(true);
-	}
-}
-
-class GridSpace extends JPanel {
-	private boolean isValidSpace;
-	private int x;
-	private int y;
-
-	//This takes the value of x (should be 1-7) and adds it to 96
-	//to get the ascii value of a-g
-	private char convertIntToChar(int x) {
-		x = x + 96;
-		return (char) x;
-	}
-
-	//This uses the converted char value to determine whether it is a playable
-	//spot on the 7x7 grid. it returns true if it is and false if it isn't.
-	private boolean checkValidSpace(int intCoordX, int y){
-		char x = convertIntToChar(intCoordX);
-		if (x == 'a' || x == 'g') {
-			if (y == 7 || y == 4 || y == 1) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else if (x == 'b' || x == 'f') {
-			if (y == 6 || y == 4 || y == 2) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else if (x == 'c' || x == 'e') {
-			if (y == 5 || y == 4 || y == 3) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else if (x == 'd') {
-			if (y == 7 || y == 6 || y == 5 || y == 3 || y == 2 || y == 1) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return false;
-		}
-	}
-
-	//This is the constructor that takes in the integer coordinates
-	//Then, it checks if it is valid and stores that in the GridSpace object
-	//And if it is valid, appropriately marks it.
-	public GridSpace(int x, int y) {
-		this.isValidSpace = checkValidSpace(x, y);
-		if(isValidSpace == true) {
-			add(new JLabel("O"));
-		}
-		else {
-			add(new JLabel(""));
-		}
-	}
+    public static void main(String[] args) {
+        launch(args);
+    }
 
 }
