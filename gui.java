@@ -1,3 +1,22 @@
+    package sample;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.layout.*;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import javafx.scene.shape.Line;
+
+
+public class Main extends Application{
+
+
     private char currentPlayer = 'W';
     private Cell[][] cell = new Cell[7][7];
 
