@@ -1,4 +1,4 @@
-    package sample;
+    
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -14,7 +14,7 @@ import javafx.scene.text.Text;
 import javafx.scene.shape.Line;
 
 
-public class Main extends Application{
+public class Gui extends Application{
 
 
     private char currentPlayer = 'W';
@@ -83,9 +83,61 @@ public class Main extends Application{
 
     public class Cell extends Pane {
         private char player = ' ';
+        private boolean validSpace;
+    	//add pair for valid space position
+    	//add game object to interact with the back end
+    	
+    	//This takes the value of x (should be 1-7) and adds it to 96
+    	//to get the ascii value of a-g
+    	private char convertIntToChar(int x) {
+    		x = x + 97;
+    		return (char) x;
+    	}
+    	
+    	//This uses the converted char value to determine whether it is a playable
+    	//spot on the 7x7 grid. it returns true if it is and false if it isn't.
+    	private boolean checkValidSpace(int intCoordX, int y){
+    		char x = convertIntToChar(intCoordX);
+    		if (x == 'a' || x == 'g') {
+    			if (y == 6 || y == 3 || y == 0) {
+    				return true;
+    			}
+    			else {
+    				return false;
+    			}
+    		}
+    		else if (x == 'b' || x == 'f') {
+    			if (y == 5 || y == 3 || y == 1) {
+    				return true;
+    			}
+    			else {
+    				return false;
+    			}
+    		}
+    		else if (x == 'c' || x == 'e') {
+    			if (y == 4 || y == 3 || y == 2) {
+    				return true;
+    			}
+    			else {
+    				return false;
+    			}
+    		}
+    		else if (x == 'd') {
+    			if (y == 6 || y == 5 || y == 4 || y == 2 || y == 1 || y == 0) {
+    				return true;
+    			}
+    			else {
+    				return false;
+    			}
+    		}
+    		else {
+    			return false;
+    		}
+    	}
 
         public Cell(int i, int j){
             //setStyle("-fx-border-color : black");
+        	validSpace = checkValidSpace(i, j);
 
             switch(i){
                 case 0:
@@ -430,7 +482,9 @@ public class Main extends Application{
             }
 
             this.setPrefSize(150,150);
-            this.setOnMouseClicked(e -> handleClick());
+            if (validSpace == true){
+            	this.setOnMouseClicked(e -> handleClick());
+            }
         }
 
         private void handleClick(){
