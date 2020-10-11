@@ -489,7 +489,6 @@ public class Gui extends Application{
 
         private void handleClick(){
             System.out.println("clicked");
-            // bool isvalid
             if(player == ' ' && currentPlayer != ' '){
                 setPlayer(currentPlayer);
                 currentPlayer = (currentPlayer == 'W') ? 'B' : 'W';
