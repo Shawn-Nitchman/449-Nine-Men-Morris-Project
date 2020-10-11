@@ -10,7 +10,8 @@ public abstract class Game {
     public static final int START_COUNT = 9;
 
     //Variables
-    protected Vector<Player> players;
+    protected Vector<Player> players; // Container of 2 players in the Game.
+    // Player class declarations.
     public Player pl1, pl2;
 
 
@@ -34,8 +35,8 @@ public abstract class Game {
             players = new Vector<>();
 
             //Could use Dialog Box to get player names from users
-            players.add(pl1 = new Player("Player1"));
-            players.add(pl2 = new Player("Player2"));
+            players.add(pl1 = new Player("Red"));
+            players.add(pl2 = new Player("Blue"));
         }
 
 

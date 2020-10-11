@@ -20,6 +20,7 @@ public class Player {
 
     //Getters
     public Vector<Piece> getPieces() { return this.pieces; }
+    public String getName() { return this.name; }
     public boolean isPlacing() { return this.hasInBag(); }
     public boolean hasTwoPieces() {return (this.pieces.size() == 2); }
     public boolean isFlying() { return (this.pieces.size() == 3); }

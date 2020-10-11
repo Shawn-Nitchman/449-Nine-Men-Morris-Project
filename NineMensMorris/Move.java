@@ -23,19 +23,19 @@ public abstract class Move {
         return player.isFlying();
     }
     
-        public static boolean move (Player player, Point oldPair, Point newPair){
-        if (isOpen(newPair) && isLegal(player, oldPair, newPair)) {
-            for (Piece piece : player.getPieces()) {
-                if (piece.getPair().equals(oldPair)) {
-                    piece.setPair(newPair); //FIXME: Is this threadsafe?
-                    return true;
-                }
-            }
-        } else {
-            return false;
-        }
+    public static boolean move (Player player, Point oldPair, Point newPair){
+    	if (isOpen(newPair) && isLegal(player, oldPair, newPair)) {
+    		for (Piece piece : player.getPieces()) {
+    			if (piece.getPair().equals(oldPair)) {
+    				piece.setPair(newPair); //FIXME: Is this threadsafe?
+    				return true;
+    			}
+    		}
+    	} else {
+    		return false;
+    	}
 
-        return false; //error if this line of code is left out
+    	return false; //error if this line of code is left out
     }
 
 

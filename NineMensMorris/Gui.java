@@ -1,4 +1,6 @@
+package NineMensMorris;
     
+import java.awt.Point;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -15,15 +17,16 @@ import javafx.scene.shape.Line;
 
 
 public class Gui extends Application{
+	private Game.GamePlay myGame = new Game.GamePlay();
 
-
-    private char currentPlayer = 'W';
+    private String currentPlayer = myGame.pl1.getName();
     private Cell[][] cell = new Cell[7][7];
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("9 Men Morris");
 
+        //Layout initialization
         BorderPane border = new BorderPane();
         VBox player1 = addVBox("Player1", 9);
         VBox player2 = addVBox("Player2", 9);
@@ -39,7 +42,9 @@ public class Gui extends Application{
 
     }
 
+    // Add to draw/visual class
     public VBox addVBox(String name, int num) {
+    	//makes and returns vertical boxes for the players
         VBox vbox = new VBox();
         vbox.setAlignment(Pos.TOP_CENTER);
         vbox.setSpacing(8);
@@ -64,6 +69,7 @@ public class Gui extends Application{
         return vbox;
     }
 
+    // Creates 7x7 grid and returns it
     public GridPane addGridPane() {
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(10,10,10,10));
@@ -74,7 +80,6 @@ public class Gui extends Application{
                 cell[i][j] =  new Cell(i, j);
                 gridpane.add(cell[i][j], i, j);
             }
-
         }
 
         return gridpane;
@@ -84,8 +89,8 @@ public class Gui extends Application{
     public class Cell extends Pane {
         private char player = ' ';
         private boolean validSpace;
+        private Point pair = new Point();
     	//add pair for valid space position
-    	//add game object to interact with the back end
     	
     	//This takes the value of x (should be 1-7) and adds it to 96
     	//to get the ascii value of a-g
@@ -135,15 +140,30 @@ public class Gui extends Application{
     		}
     	}
 
+    	//convert integer coordinates into Point coordinates
+    	private Point convertCoordinates(int x, int y) {
+    		if (x == 0 || x == 6 || y == 0 || y == 6) {
+    			pair.x = 2;
+    		}
+    		if (x == 1 || x == 5 || y == 1 || y == 5) {
+    			pair.x = 1;
+    		}
+    		if (x == 2 || x == 4 || y == 2 || y == 4) {
+    			pair.x = 0;
+    		}
+    	}
+    	
         public Cell(int i, int j){
             //setStyle("-fx-border-color : black");
         	validSpace = checkValidSpace(i, j);
 
+        	//This whole switch initializes the drawings for the board for a new game
             switch(i){
                 case 0:
                     if(j == 1 || j == 2 || j == 4 || j == 5) {
                         Line line1 = new Line();
 
+                        //Can we separate the drawing code and the gameplay code?
                         line1.startXProperty().bind(this.widthProperty().divide(2));
                         line1.endXProperty().bind(this.widthProperty().divide(2));
                         line1.endYProperty().bind(this.heightProperty());
@@ -481,15 +501,19 @@ public class Gui extends Application{
                     break;
             }
 
-            this.setPrefSize(150,150);
+            this.setPrefSize(150,150); // sets default cell size (refactor sometime!)
+            //This checks if the cell is a playable space on the board
             if (validSpace == true){
             	this.setOnMouseClicked(e -> handleClick());
+            	// add on hover actions
             }
         }
 
         private void handleClick(){
             System.out.println("clicked");
-            if(player == ' ' && currentPlayer != ' '){
+            // if valid move, then move and change whose turn it is
+            // need player, old pair & new pair for Move.move()
+            if(player == ' ' && currentPlayer != ""){
                 setPlayer(currentPlayer);
                 currentPlayer = (currentPlayer == 'W') ? 'B' : 'W';
             }
