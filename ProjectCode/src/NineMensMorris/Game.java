@@ -10,8 +10,9 @@ public abstract class Game {
     public static final int START_COUNT = 9;
 
     //Variables
-    public Vector<Player> players;
+    protected Vector<Player> players;
     public Player pl1, pl2;
+
 
     public static void main(String[] args){
         GamePlay theGame = new Game.GamePlay();
@@ -26,9 +27,7 @@ public abstract class Game {
         }
 
         //Getters
-        public Vector<Player> getPlayers(){
-            return players;
-        }
+        public Vector<Player> getPlayers(){ return super.players; }
 
         //Initializers
         protected void InitPlayers() {

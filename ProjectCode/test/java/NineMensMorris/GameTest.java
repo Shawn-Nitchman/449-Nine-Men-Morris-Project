@@ -1,16 +1,15 @@
 package NineMensMorris;
-import NineMensMorris.Game;
-import NineMensMorris.Move;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
-import java.util.Enumeration;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameTest {
+class GameTest extends Game {
+
     Game.GamePlay theGame;
 
     @BeforeEach
@@ -32,4 +31,30 @@ class GameTest {
         assertFalse(theGame.lostByPieceCount());
 
     }
+
+    @Test
+    public void ConstructorTest() throws Exception { //Tests the Constructor and InitPlayers
+
+        assertEquals (theGame.getPlayers().size(),2); //Tests for 2 players
+
+        for (Player player : theGame.getPlayers()) {
+            assertEquals(player.getPieces().size(), 9); //Tests for 9 pieces each
+
+            for (Piece piece : player.getPieces()) {
+                assertEquals(piece.getPair(), Game.IN_BAG); //Test that all pieces are initialized
+            }
+        }
+    }
+
+    @Test
+    public void lostByPieceCountTest() throws Exception {  //Tests the lostByPieceCount method
+        //Set-up
+        Vector<Piece> myVec = new Vector<Piece>();
+        myVec.add(new Piece());
+        myVec.add(new Piece());
+        theGame.getPlayers().firstElement().setPieces(myVec);
+        assertTrue(theGame.lostByPieceCount());
+
+    }
+
 }
