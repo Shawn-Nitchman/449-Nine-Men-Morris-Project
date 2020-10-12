@@ -1,14 +1,54 @@
 package NineMensMorris;
+
 import java.awt.*;
+import java.util.HashMap;
 
 public abstract class Move {
+    private static HashMap<Point, Point> coordTable;
     private static Game.GamePlay myGame;
 
     public static void linkUp(Game.GamePlay myGame) {
         Move.myGame = myGame;
+        Move.InitCoordTable();
     }
 
+    public static HashMap<Point, Point> getCoordTable() { return coordTable; }
     protected static Game.GamePlay getMyGame() { return myGame; }
+
+    private static void InitCoordTable(){
+        coordTable = new HashMap<Point, Point>();
+
+        coordTable.put(new Point(0, 0), new Point(2,0));
+        coordTable.put(new Point(0, 3), new Point(2,1));
+        coordTable.put(new Point(0,6), new Point(2,2));
+
+        coordTable.put(new Point(1, 1), new Point(1,0));
+        coordTable.put(new Point(1, 3), new Point(1,1));
+        coordTable.put(new Point(1, 5), new Point(1,2));
+
+        coordTable.put(new Point(2, 2), new Point(0,0));
+        coordTable.put(new Point(2, 3), new Point(0,1));
+        coordTable.put(new Point(2, 4), new Point(0,2));
+
+        coordTable.put(new Point(3, 0), new Point(2,7));
+        coordTable.put(new Point(3, 1), new Point(1,7));
+        coordTable.put(new Point(3, 2), new Point(0,7));
+        coordTable.put(new Point(3, 4), new Point(0,3));
+        coordTable.put(new Point(3, 5), new Point(1,3));
+        coordTable.put(new Point(3, 6), new Point(2,3));
+
+        coordTable.put(new Point(4, 2), new Point(0,6));
+        coordTable.put(new Point(4, 3), new Point(0,5));
+        coordTable.put(new Point(4, 4), new Point(0,4));
+
+        coordTable.put(new Point(5, 1), new Point(1,6));
+        coordTable.put(new Point(5, 3), new Point(1,5));
+        coordTable.put(new Point(5, 5), new Point(1,4));
+
+        coordTable.put(new Point(6, 0), new Point(2,6));
+        coordTable.put(new Point(6, 3), new Point(2,5));
+        coordTable.put(new Point(6, 6), new Point(2,4));
+    }
 
     public static boolean isOpen(Point pair) {
         for (Player player : myGame.getPlayers()) {
