@@ -1,6 +1,7 @@
 package NineMensMorris;
     
 import java.awt.Point;
+import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -21,9 +22,48 @@ public class Gui extends Application{
 
     private String currentPlayer = myGame.pl1.getName();
     private Cell[][] cell = new Cell[7][7];
+    private HashMap<Point, Point> coordTable; //HashMap storing conversion information
+
+    private void InitCoordTable(){
+        coordTable = new HashMap<Point, Point>();
+
+        coordTable.put(new Point(0, 0), new Point(2,0));
+        coordTable.put(new Point(0, 3), new Point(2,1));
+        coordTable.put(new Point(0,6), new Point(2,2));
+
+        coordTable.put(new Point(1, 1), new Point(1,0));
+        coordTable.put(new Point(1, 3), new Point(1,1));
+        coordTable.put(new Point(1, 5), new Point(1,2));
+
+        coordTable.put(new Point(2, 2), new Point(0,0));
+        coordTable.put(new Point(2, 3), new Point(0,1));
+        coordTable.put(new Point(2, 4), new Point(0,2));
+
+        coordTable.put(new Point(3, 0), new Point(2,7));
+        coordTable.put(new Point(3, 1), new Point(1,7));
+        coordTable.put(new Point(3, 2), new Point(0,7));
+        coordTable.put(new Point(3, 4), new Point(0,3));
+        coordTable.put(new Point(3, 5), new Point(1,3));
+        coordTable.put(new Point(3, 6), new Point(2,3));
+
+        coordTable.put(new Point(4, 2), new Point(0,6));
+        coordTable.put(new Point(4, 3), new Point(0,5));
+        coordTable.put(new Point(4, 4), new Point(0,4));
+
+        coordTable.put(new Point(5, 1), new Point(2,6));
+        coordTable.put(new Point(5, 3), new Point(2,5));
+        coordTable.put(new Point(5, 5), new Point(2,4));
+
+        coordTable.put(new Point(6, 0), new Point(2,6));
+        coordTable.put(new Point(6, 3), new Point(2,5));
+        coordTable.put(new Point(6, 5), new Point(2,4));
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        InitCoordTable();
+
         primaryStage.setTitle("9 Men Morris");
 
         //Layout initialization
@@ -89,9 +129,12 @@ public class Gui extends Application{
     public class Cell extends Pane {
         private String player = " ";
         private boolean validSpace;
-        private Point pair = new Point();
-    	//add pair for valid space position
-    	
+        private Point myPair; //add pair for valid space position
+
+        private Point getCoords(int i, int j){
+    	    Point oldCoord = new Point(i,j);
+    	    return coordTable.getOrDefault(oldCoord, new Point());
+        }
     	//This takes the value of x (should be 1-7) and adds it to 96
     	//to get the ascii value of a-g
     	private char convertIntToChar(int x) {
@@ -140,16 +183,18 @@ public class Gui extends Application{
     		}
     	}
 
+
+
     	//convert integer coordinates into Point coordinates
     	private Point convertCoordinates(int x, int y) {
     		if (x == 0 || x == 6 || y == 0 || y == 6) {
-    			pair.x = 2;
+    			myPair.x = 2;
     		}
     		if (x == 1 || x == 5 || y == 1 || y == 5) {
-    			pair.x = 1;
+    			myPair.x = 1;
     		}
     		if (x == 2 || x == 4 || y == 2 || y == 4) {
-    			pair.x = 0;
+    			myPair.x = 0;
     		}
     		return null;
     	}
@@ -503,8 +548,12 @@ public class Gui extends Application{
             }
 
             this.setPrefSize(150,150); // sets default cell size (refactor sometime!)
+
             //This checks if the cell is a playable space on the board
             if (validSpace == true){
+                //Assign myPair via coordTable
+                this.myPair = new Point(getCoords(i, j));
+
             	this.setOnMouseClicked(e -> handleClick());
             	// add on hover actions
             }
@@ -515,8 +564,11 @@ public class Gui extends Application{
             // if valid move, then move and change whose turn it is
             // need player, old pair & new pair for Move.move()
             if(player == " " && currentPlayer != ""){
-                setPlayer(currentPlayer);
-                currentPlayer = (currentPlayer == "W") ? "B" : "W";
+
+                 if (Move.move(((currentPlayer == "R") ? myGame.pl1: myGame.pl2), Game.IN_BAG, this.myPair)) {
+                    setPlayer(currentPlayer);
+                    currentPlayer = (currentPlayer == "R") ? "B" : "R";
+                }
             }
 
         }
@@ -528,27 +580,19 @@ public class Gui extends Application{
         public void setPlayer(String c){
             player = c;
 
-            if(player == "W"){
+            Ellipse ellipse = new Ellipse(this.getWidth()/3,this.getHeight()/3, this.getWidth()/3,this.getHeight()/3);
+            ellipse.centerXProperty().bind(this.widthProperty().divide(2));
+            ellipse.centerYProperty().bind(this.heightProperty().divide(2));
+            ellipse.radiusXProperty().bind(this.widthProperty().divide(3));
+            ellipse.radiusYProperty().bind(this.heightProperty().divide(3));
+            ellipse.setStroke(Color.BLACK);
 
-                Ellipse ellipse = new Ellipse(this.getWidth()/3,this.getHeight()/3, this.getWidth()/3,this.getHeight()/3);
-                ellipse.centerXProperty().bind(this.widthProperty().divide(2));
-                ellipse.centerYProperty().bind(this.heightProperty().divide(2));
-                ellipse.radiusXProperty().bind(this.widthProperty().divide(3));
-                ellipse.radiusYProperty().bind(this.heightProperty().divide(3));
-                ellipse.setStroke(Color.BLACK);
-                ellipse.setFill(Color.WHITE);
-
+            if(player == "R"){
+                ellipse.setFill(Color.RED);
                 getChildren().add(ellipse);
 
             } else if(player == "B") {
-                Ellipse ellipse = new Ellipse(this.getWidth() / 3, this.getHeight() / 3, this.getWidth() / 3, this.getHeight() / 3);
-                ellipse.centerXProperty().bind(this.widthProperty().divide(2));
-                ellipse.centerYProperty().bind(this.heightProperty().divide(2));
-                ellipse.radiusXProperty().bind(this.widthProperty().divide(3));
-                ellipse.radiusYProperty().bind(this.heightProperty().divide(3));
-                ellipse.setStroke(Color.BLACK);
-                ellipse.setFill(Color.BLACK);
-
+                ellipse.setFill(Color.BLUE);
                 getChildren().add(ellipse);
             }
 
