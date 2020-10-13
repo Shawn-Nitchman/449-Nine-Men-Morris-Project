@@ -1,6 +1,5 @@
 package NineMensMorris;
 
-import javafx.application.Application;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -9,7 +8,8 @@ import javafx.scene.shape.Line;
 import java.awt.*;
 
 public class Cell extends Pane {
-    private String player = " ";
+
+
     private boolean validSpace;
     private Point myPair = new Point (-99,-99); //add pair for valid space position
     private int myI, myJ;
@@ -20,7 +20,7 @@ public class Cell extends Pane {
     }
     //This takes the value of x (should be 1-7) and adds it to 96
     //to get the ascii value of a-g
-    private char convertIntToChar(int x) {
+    public char convertIntToChar(int x) {
         x = x + 97;
         return (char) x;
     }
@@ -440,12 +440,12 @@ public class Cell extends Pane {
 
     }
 
-    public String getPlayer(){
-        return player;
-    }
+//    public String getPlayer(){
+//        return player;
+//    }
 
     public void setPlayer(String c){
-        player = c;
+
 
         Ellipse ellipse = new Ellipse(this.getWidth()/3,this.getHeight()/3, this.getWidth()/3,this.getHeight()/3);
         ellipse.centerXProperty().bind(this.widthProperty().divide(2));
@@ -454,7 +454,7 @@ public class Cell extends Pane {
         ellipse.radiusYProperty().bind(this.heightProperty().divide(3));
         ellipse.setStroke(javafx.scene.paint.Color.BLACK);
 
-        if(player == "R"){
+        if(c == "R"){
                 /*
                 for (Node object : player1.getChildrenUnmodifiable()) {
                     if (object.getClass().isInstance(ellipse)) {
@@ -464,12 +464,29 @@ public class Cell extends Pane {
                 */
 
             ellipse.setFill(javafx.scene.paint.Color.RED);
-            getChildren().add(ellipse);
 
-        } else if(player == "B") {
+            getChildren().add(ellipse);
+            //Track backward for pl1 indexes.        // Index 8 - 0;
+            /*Gui.getMyGame().pl1.getPieces().elementAt(Gui.player1.getChildren().size() - 2).setPair(myPair);
+
+            System.out.println(Gui.getMyGame().pl1.getPieces().get(Gui.player1.getChildren().size() - 2).getPair());
+*/
+
+
+            Gui.removeVBoxElement("R");
+
+
+        } else if(c == "B") {
             ellipse.setFill(Color.BLUE);
             getChildren().add(ellipse);
+            /*Gui.getMyGame().pl2.getPieces().elementAt(Gui.player2.getChildren().size() - 2).setPair(myPair);
+            System.out.println(Gui.getMyGame().pl2.getPieces().get(0).getPair());*/
+
+            Gui.removeVBoxElement("B");
         }
+
+
+
 
     }
 

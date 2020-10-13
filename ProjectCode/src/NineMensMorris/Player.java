@@ -1,5 +1,4 @@
 package NineMensMorris;
-import java.awt.*;
 import java.util.Vector;
 
 public class Player {
