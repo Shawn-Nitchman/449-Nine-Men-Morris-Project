@@ -35,6 +35,7 @@ public class Gui extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception{
 
+        // In progress on making it change color each time.
         primaryStage.setTitle("9 Men Morris");
 
         //Layout initialization
@@ -115,6 +116,7 @@ public class Gui extends Application{
 
     public static void main(String[] args) {
         launch(args);
+
 
     }
 

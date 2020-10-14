@@ -427,7 +427,7 @@ public class Cell extends Pane {
     }
 
     private void handleClick(){
-        System.out.println("clicked" + " " + this.myPair.toString() + " myI = " + this.myI + " myJ = " + this.myJ);
+//        System.out.println("clicked" + " " + this.myPair.toString() + " myI = " + this.myI + " myJ = " + this.myJ);
         // if valid move, then move and change whose turn it is
         // need player, old pair & new pair for Move.move()
         //if(player == " " && currentPlayer != ""){
@@ -467,22 +467,20 @@ public class Cell extends Pane {
 
             getChildren().add(ellipse);
             //Track backward for pl1 indexes.        // Index 8 - 0;
-            /*Gui.getMyGame().pl1.getPieces().elementAt(Gui.player1.getChildren().size() - 2).setPair(myPair);
-
-            System.out.println(Gui.getMyGame().pl1.getPieces().get(Gui.player1.getChildren().size() - 2).getPair());
-*/
 
 
             Gui.removeVBoxElement("R");
 
 
+
+
         } else if(c == "B") {
             ellipse.setFill(Color.BLUE);
             getChildren().add(ellipse);
-            /*Gui.getMyGame().pl2.getPieces().elementAt(Gui.player2.getChildren().size() - 2).setPair(myPair);
-            System.out.println(Gui.getMyGame().pl2.getPieces().get(0).getPair());*/
+
 
             Gui.removeVBoxElement("B");
+
         }
 
 

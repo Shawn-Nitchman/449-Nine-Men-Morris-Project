@@ -59,15 +59,20 @@ public abstract class Move {
         return true; //none found, so return true the spot isOpen
     }
 
+    //Not Sprint1.
     protected static boolean isFlying(Player player) {
         return player.isFlying();
     }
-    
+
+
+    // Move function.
     public static boolean move (Player player, Point oldPair, Point newPair){
+
     	if (isOpen(newPair) && isLegal(player, oldPair, newPair)) {
     		for (Piece piece : player.getPieces()) {
     			if (piece.getPair().equals(oldPair)) {
     				piece.setPair(newPair); //FIXME: Is this threadsafe?
+                    System.out.println(player.getName() + " just placed at " + piece.getPair());
     				return true;
     			}
     		}
@@ -79,6 +84,7 @@ public abstract class Move {
     }
 
 
+    //
     protected static boolean isLegal(Player player, Point oldPair, Point newPair) {
         if (oldPair.equals(Game.IN_BAG)) {
             return true;
