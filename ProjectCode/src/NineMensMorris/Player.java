@@ -31,7 +31,7 @@ public class Player {
     private void InitPieces(){
         pieces = new Vector<>();
         for (int i = 0; i < Game.START_COUNT; i++) {
-            pieces.add(new Piece());
+            pieces.add(new Piece(Game.IN_BAG, this.name));
         }
     }
 

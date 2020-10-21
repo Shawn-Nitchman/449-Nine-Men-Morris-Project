@@ -432,7 +432,15 @@ public class Cell extends Pane {
         // need player, old pair & new pair for Move.move()
         //if(player == " " && currentPlayer != ""){
 
-        if (Move.move(((Gui.getCurrentPlayer() == "R") ? Gui.getMyGame().pl1: Gui.getMyGame().pl2), Game.IN_BAG, this.myPair)) {
+        /*
+
+        Recommend putting if statements to handle each different click.
+
+        if (click on the actual piece) { start highlighting the locations to move. }
+
+         */
+
+        if (Move.changeLocation(((Gui.getCurrentPlayer() == "R") ? Gui.getMyGame().pl1: Gui.getMyGame().pl2), Game.IN_BAG, this.myPair)) {
             setPlayer(Gui.getCurrentPlayer());
             Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
         }

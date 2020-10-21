@@ -66,13 +66,13 @@ public abstract class Move {
 
 
     // Move function.
-    public static boolean move (Player player, Point oldPair, Point newPair){
+    public static boolean changeLocation(Player player, Point oldPair, Point newPair){
 
     	if (isOpen(newPair) && isLegal(player, oldPair, newPair)) {
     		for (Piece piece : player.getPieces()) {
     			if (piece.getPair().equals(oldPair)) {
     				piece.setPair(newPair); //FIXME: Is this threadsafe?
-                    System.out.println(player.getName() + " just placed at " + piece.getPair());
+                    //System.out.println(player.getName() + " just placed at " + piece.getPair());
     				return true;
     			}
     		}

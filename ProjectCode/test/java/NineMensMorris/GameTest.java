@@ -24,8 +24,8 @@ class GameTest extends Game {
 
     @Test
     public void FirstTest() throws Exception {
-        assertTrue(Move.move(theGame.pl1, new Point(-1, -1), new Point(0,0)));
-        assertTrue(Move.move(theGame.pl1, new Point(-1, -1), new Point(1,0)));
+        assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(0,0)));
+        assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(1,0)));
         assertFalse(Move.isOpen(new Point(0,0)));
         assertTrue(theGame.pl1.isPlacing());
         assertFalse(theGame.lostByPieceCount());

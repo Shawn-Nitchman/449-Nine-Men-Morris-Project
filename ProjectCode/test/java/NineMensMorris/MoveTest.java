@@ -47,8 +47,8 @@ class MoveTest {
 
     @Test
     void moveTestOne() throws Exception {
-        assertTrue(Move.move(theGame.pl2, Game.IN_BAG, new Point(0,0)));
-        assertTrue(Move.move(theGame.pl2, new Point(0,0), new Point(0,7)));
-        assertFalse(Move.move(theGame.pl2, new Point(0,7), new Point(2,7)));
+        assertTrue(Move.changeLocation(theGame.pl2, Game.IN_BAG, new Point(0,0)));
+        assertTrue(Move.changeLocation(theGame.pl2, new Point(0,0), new Point(0,7)));
+        assertFalse(Move.changeLocation(theGame.pl2, new Point(0,7), new Point(2,7)));
     }
 }
