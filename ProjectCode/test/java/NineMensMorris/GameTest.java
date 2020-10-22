@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest extends Game {
 
-    Game.GamePlay theGame;
+    NineMensMorris.GamePlay theGame;
 
     @BeforeEach
     void setUp() {

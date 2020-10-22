@@ -6,7 +6,7 @@ import java.awt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest {
-    Game.GamePlay theGame;
+    NineMensMorris.GamePlay theGame;
 
 
     @org.junit.jupiter.api.BeforeEach
