@@ -1,12 +1,11 @@
-package NineMensMorris;
-    
-import java.awt.Point;
-import java.util.HashMap;
+package ProjectCode.src.NineMensMorris;
 
+import ProjectCode.src.NineMensMorris.Cell;
+import ProjectCode.src.NineMensMorris.Game;
+import ProjectCode.src.NineMensMorris.Style;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -15,18 +14,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import javafx.scene.shape.Line;
 
 /// All Structure extended from Application are static. That was why we could not use the non-static methods.
 public class Gui extends Application{
 	private static Game.GamePlay myGame = new Game.GamePlay();
-
     private static String currentPlayer = "R";
     private Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
-
-
-
     public static String getCurrentPlayer() { return currentPlayer; }
     public static Game.GamePlay getMyGame() { return myGame; }
 
@@ -69,12 +63,12 @@ public class Gui extends Application{
            if(name.equals("Player1")){
                Ellipse ellipse = new Ellipse(20,20,20,20);
                ellipse.setStroke(Color.BLACK);
-               ellipse.setFill(Color.RED);
+               ellipse.setFill(Style.darkRed);
                vbox.getChildren().add(ellipse);
            }else{
                Ellipse ellipse = new Ellipse(20,20,20,20);
                ellipse.setStroke(Color.BLACK);
-               ellipse.setFill(Color.BLUE);
+               ellipse.setFill(Style.darkBlue);
                vbox.getChildren().add(ellipse);
            }
         }
@@ -85,7 +79,7 @@ public class Gui extends Application{
     public static void removeVBoxElement(String id) {
 
         if (id == "R") {
-            ///Some how index zero is the actualy player's name "Player1/Player2" Please solve this.
+            ///Some how index zero is the actual player's name "Player1/Player2" Please solve this.
             player1.getChildren().remove(1);
         }
         if (id == "B") {
@@ -98,26 +92,16 @@ public class Gui extends Application{
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(10,10,10,10));
 
-
         for(int i = 0; i < 7; i++){
             for(int j = 0; j < 7; j++){
                 cell[i][j] =  new Cell(i, j);
                 gridpane.add(cell[i][j], i, j);
             }
         }
-
         return gridpane;
     }
 
-
-
-
-
-
     public static void main(String[] args) {
         launch(args);
-
-
     }
-
 }

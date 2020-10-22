@@ -1,4 +1,7 @@
 package NineMensMorris;
+import ProjectCode.src.NineMensMorris.Game;
+import ProjectCode.src.NineMensMorris.Move;
+import ProjectCode.src.NineMensMorris.Player;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
