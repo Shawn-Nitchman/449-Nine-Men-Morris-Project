@@ -11,13 +11,8 @@ public abstract class Game {
 
     //Variables
     protected Vector<Player> players; // Container of 2 players in the Game.
-    // Player class declarations.
+    protected HashMap<Point, Player> quickTable = new HashMap<Point, Player>(); //HashTable for quick reference
     public Player pl1, pl2;
-
-
-    public static void main(String[] args){
-        GamePlay theGame = new Game.GamePlay();
-    }
 
     public static class GamePlay extends Game {
 
@@ -28,7 +23,8 @@ public abstract class Game {
         }
 
         //Getters
-        public Vector<Player> getPlayers(){ return super.players; }
+        public Vector<Player> getPlayers() { return super.players; }
+        public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
 
         //Initializers
         protected void InitPlayers() {
@@ -39,83 +35,110 @@ public abstract class Game {
             players.add(pl2 = new Player("Blue"));
         }
 
-
-    public boolean inMill(Piece piece) {
-        if (piece.getPair().getY() % 2 == 0) //even
-        {
-            //check two above in Y and check two below in Y
-            if (checkMill(piece.getName(),
-                    new Point(piece.getPair().x, piece.getPair().y - 1),
-                    new Point(piece.getPair().x, piece.getPair().y - 2))) {
-                return true;
-            } else if (checkMill(piece.getName(),
-                    new Point(piece.getPair().x, piece.getPair().y + 1),
-                    new Point(piece.getPair().x, piece.getPair().y + 2))) {
-                return true;
-        }
-            return true;
-        }
-        else { //odd
-            int x1, x2;
-            if (piece.getPair().x == 0) {x1 = 1; x2 = 2;}
-            else if (piece.getPair().x == 1) {x1 = 0; x2 = 2;}
-            else {x1 = 0; x2 = 1;}
-
-            //check one above and one below in Y, check mids
-            if (checkMill(piece.getName(),
-                    new Point(piece.getPair().x, piece.getPair().y - 1),
-                    new Point(piece.getPair().x, piece.getPair().y + 1))) {
-                return true;
-            } else if (checkMill(piece.getName(),
-                    new Point(x1, piece.getPair().y),
-                    new Point(x2, piece.getPair().y))) {
-                return true;
-            }
-            return true;
-        }
-    }
-
-        public boolean checkMill(String name, Point p1, Point p2) {
-            Player player = this.pl1;
-            if (name == this.pl2.getName()) {
-                player = this.pl2;
-            }
-
-            Boolean flag1 = false, flag2 = false;
-            for (Piece piece : player.getPieces()) {
-                if (piece.getPair().equals(p1)) {
-                    flag1 = true;
-                } else if (piece.getPair().equals(p2)) {
-                    flag2 = true;
+        //Main Functions
+        protected void DrawQuickTable() {
+            quickTable = new HashMap<Point, Player>();
+            for (Player player : players) {
+                for (Piece piece : player.getPieces()) {
+                    if (!piece.getPair().equals(new Point(IN_BAG))) {
+                        getQuickTable().put(piece.getPair(), player);
+                    }
                 }
             }
-            if (flag1 && flag2) {
-                return true;
-            }
-            return false;
         }
 
+        public int inMill(Piece piece) {
+            int millCount = 0;
+            int myX = piece.getPair().x;
+            int myY = piece.getPair().y;
+            Player myPlayer = piece.getMyPlayer();
 
+            switch (myY % 2) {//Mod operator for even/odd
+                case 0: //even
+                        //Check two below for Y, SPECIAL CASE for myY == 0
+                        if (checkMill(
+                                myPlayer,
+                                new Point(myX, (myY == 0) ? 7 : myY - 1),
+                                new Point(myX, (myY == 0) ? 6 : myY - 2))) {
+                            millCount++;
+                        }
+                        //Check two above for Y, SPECIAL CASE for myY == 6
+                        if (checkMill(
+                                myPlayer,
+                                new Point(myX, myY + 1),
+                                new Point(myX, (myY == 6) ? 0 : myY + 2))) {
+                            millCount++;
+                        }
+                    break;
 
+                default:  //odd
+                    int x1, x2;
+                    //Figuring which squares to check for mid-mill
+                    switch (myX) {
+                        case 0 -> { x1 = 1; x2 = 2; } //myX == 0
+                        case 1 -> { x1 = 0; x2 = 2; } //myX == 1
+                        case 2 -> { x1 = 0; x2 = 1; } //myX == 2
+                        default -> { return 0; } //Out-of-Bounds
+                    }
+
+                    //Check X per above switch
+                    if (checkMill(
+                            myPlayer,
+                            new Point(x1, myY),
+                            new Point(x2, myY))) {
+                        millCount++;
+                    }
+                    //Check one below and one above for Y, SPECIAL CASE for myY == 7
+                    if (checkMill(
+                            myPlayer,
+                            new Point(myX, myY - 1),
+                            new Point(myX, (myY == 7) ? 0 : myY + 1))) {
+                        millCount++;
+                    }
+                    break;
+            }
+            return millCount;
+        }
+
+        //Helper Function for inMill
+        public boolean checkMill(Player player, Point p1, Point p2) {
+            HashMap<Point, Player> myQuickTable = getQuickTable();
+            return myQuickTable.containsKey(p1) &&
+                    myQuickTable.get(p1).equals(player) &&
+                    myQuickTable.containsKey(p2) &&
+                    myQuickTable.get(p2).equals(player);
+        }
+
+        public boolean isPlacing() {
+            //If the quickTable and the sum of the player's pieces vectors are not equal,
+            // there are still unplaced pieces
+            return !(getQuickTable().keySet().size() == pl1.getPieces().size() + pl2.getPieces().size());
+        }
 
         public boolean lostByPieceCount() {
             for (Player player : this.players) {
-                if (player.hasTwoPieces()) {
-                    return true;
-                }
+                if (player.hasTwoPieces()) return true;
             }
             return false;
         }
 
         public boolean noMove(Player player) {
-            /*
-            for each player, same structure as isLegal (Move class) but check isOpen (Move class).
 
-            If player is flying, then
-            return false;
+            if (player.isFlying()) return false;
 
-             */
+            for (Map.Entry<Point, Player> myPair : getQuickTable().entrySet()) {
+                if (myPair.getValue().equals(player)) {
+                    for (Point checkPair : Move.getMoveTable().get(myPair.getKey())) {
+                        if (Move.isOpen(checkPair)) return false;
+                    }
+                }
+            }
             return true;
+        }
+
+        //Entry for use without GUI
+        public static void main(String[] args){
+            GamePlay theGame = new Game.GamePlay();
         }
     }
 }

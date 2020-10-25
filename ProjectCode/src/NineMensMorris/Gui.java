@@ -1,7 +1,6 @@
 package NineMensMorris;
     
-import java.awt.Point;
-import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -15,7 +14,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import javafx.scene.shape.Line;
 
 /// All Structure extended from Application are static. That was why we could not use the non-static methods.
 public class Gui extends Application{
@@ -86,10 +84,26 @@ public class Gui extends Application{
 
         if (id == "R") {
             ///Some how index zero is the actualy player's name "Player1/Player2" Please solve this.
-            player1.getChildren().remove(1);
+            //player1.getChildren().remove(1);
+            Node theNode = null;
+            for (Node node : player1.getChildren()) {
+                if (node instanceof Ellipse) {
+                    theNode = node;
+                    break;
+                }
+            }
+            if (theNode != null) {player1.getChildren().remove(theNode); }
         }
         if (id == "B") {
-            player2.getChildren().remove(1);
+            //player2.getChildren().remove(1);
+            Node theNode = null;
+            for (Node node : player2.getChildren()) {
+                if (node instanceof Ellipse) {
+                    theNode = node;
+                    break;
+                }
+            }
+            if (theNode != null) {player2.getChildren().remove(theNode); }
         }
     }
 
@@ -97,7 +111,6 @@ public class Gui extends Application{
     public GridPane addGridPane() {
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(10,10,10,10));
-
 
         for(int i = 0; i < 7; i++){
             for(int j = 0; j < 7; j++){
@@ -109,15 +122,7 @@ public class Gui extends Application{
         return gridpane;
     }
 
-
-
-
-
-
     public static void main(String[] args) {
         launch(args);
-
-
     }
-
 }

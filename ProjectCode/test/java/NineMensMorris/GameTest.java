@@ -24,10 +24,10 @@ class GameTest extends Game {
 
     @Test
     public void FirstTest() throws Exception {
-        assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(0,0)));
-        assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(1,0)));
+        assertTrue(Move.changeLocation(new Point(-1, -1), new Point(0,0)));
+        assertTrue(Move.changeLocation(new Point(-1, -1), new Point(1,0)));
         assertFalse(Move.isOpen(new Point(0,0)));
-        assertTrue(theGame.pl1.isPlacing());
+        assertTrue(theGame.isPlacing());
         assertFalse(theGame.lostByPieceCount());
 
     }
@@ -41,7 +41,7 @@ class GameTest extends Game {
             assertEquals(player.getPieces().size(), 9); //Tests for 9 pieces each
 
             for (Piece piece : player.getPieces()) {
-                assertEquals(piece.getPair(), Game.IN_BAG); //Test that all pieces are initialized
+                assertEquals(piece.getPair(), IN_BAG); //Test that all pieces are initialized
             }
         }
     }
@@ -50,11 +50,91 @@ class GameTest extends Game {
     public void lostByPieceCountTest() throws Exception {  //Tests the lostByPieceCount method
         //Set-up
         Vector<Piece> myVec = new Vector<Piece>();
-        myVec.add(new Piece());
-        myVec.add(new Piece());
+        myVec.add(new Piece(IN_BAG, pl1));
+        myVec.add(new Piece(IN_BAG, pl1 ));
         theGame.getPlayers().firstElement().setPieces(myVec);
+        //Test
         assertTrue(theGame.lostByPieceCount());
 
     }
+    @Test
+    public void inMillTest() throws Exception {
+        //Setup
+        Move.changeLocation(IN_BAG, new Point (0,0));
+        Move.changeLocation(IN_BAG, new Point(2,0));
+        Move.changeLocation(IN_BAG, new Point (0,1));
+        Move.changeLocation(IN_BAG, new Point(2,1));
+        Move.changeLocation(IN_BAG, new Point (0,2));
+        Move.changeLocation(IN_BAG, new Point(2,3));
+        //Test
+        assertEquals(theGame.inMill(new Piece(new Point(0,0), theGame.pl1)), 1);
+    }
 
+    @Test
+    void getPlayers() {
+    }
+
+    @Test
+    void initPlayers() {
+    }
+
+    @Test
+    void drawQuickTable() {
+    }
+
+    @Test
+    void drawCurrentMoveTable() {
+    }
+
+    @Test
+    void inMill() {
+    }
+
+    @Test
+    void checkMill() {
+    }
+
+    @Test
+    void lostByPieceCount() {
+    }
+
+    @Test
+    void noMove() {
+        //Setup
+        Move.changeLocation(IN_BAG, new Point (2,0));
+        Move.changeLocation(IN_BAG, new Point(2,7));
+        Move.changeLocation(IN_BAG, new Point (2,1));
+        Move.changeLocation(IN_BAG, new Point(1,1));
+        Move.changeLocation(IN_BAG, new Point (2,2));
+        Move.changeLocation(IN_BAG, new Point(1,3));
+        Move.changeLocation(IN_BAG, new Point (2,3));
+        Move.changeLocation(IN_BAG, new Point(2,4));
+        //Test
+        assertTrue(theGame.noMove(theGame.pl1));
+    }
+
+    @Test
+    void isPlacing() {
+        Move.changeLocation(IN_BAG, new Point (0,0));
+        Move.changeLocation(IN_BAG, new Point(2,0));
+        Move.changeLocation(IN_BAG, new Point (0,1));
+        Move.changeLocation(IN_BAG, new Point(2,1));
+        Move.changeLocation(IN_BAG, new Point (0,2));
+        Move.changeLocation(IN_BAG, new Point(2,2));
+        Move.changeLocation(IN_BAG, new Point (0,3));
+        Move.changeLocation(IN_BAG, new Point(2,3));
+        Move.changeLocation(IN_BAG, new Point (0,4));
+        Move.changeLocation(IN_BAG, new Point(2,4));
+        Move.changeLocation(IN_BAG, new Point (0,5));
+        Move.changeLocation(IN_BAG, new Point(2,5));
+        Move.changeLocation(IN_BAG, new Point (0,6));
+        Move.changeLocation(IN_BAG, new Point(2,6));
+        Move.changeLocation(IN_BAG, new Point (0,7));
+        Move.changeLocation(IN_BAG, new Point(2,7));
+        Move.changeLocation(IN_BAG, new Point (1,0));
+        Move.changeLocation(IN_BAG, new Point(1,4));
+
+        assertFalse(theGame.isPlacing());
+
+    }
 }

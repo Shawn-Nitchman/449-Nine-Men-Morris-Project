@@ -4,20 +4,15 @@ import java.awt.*;
 public class Piece {
     //Variable
     private Point pair;
-    private String name;
+    private final Player myPlayer;
 
-    //Constructors
-    Piece() { this.pair = new Point(Game.IN_BAG); }
-    Piece(Point newPair, String newName){ this.pair = newPair; this.name = newName; }
+    //Constructor
+    Piece(Point newPair, Player player){ this.pair = newPair; this.myPlayer = player; }
 
-    //Getter
+    //Getters
     public Point getPair() { return this.pair; }
-    public String getName() {return this.name; }
-
-
+    public Player getMyPlayer() {return this.myPlayer; }
 
     //Setter
-    public void setPair(Point newPair) { this.pair.setLocation(newPair); }
-
-
+    public void setPair(Point newPair) { this.pair = newPair; }
 }
