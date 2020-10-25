@@ -24,8 +24,8 @@ class GameTest extends Game {
 
     @Test
     public void FirstTest() throws Exception {
-        assertTrue(Move.changeLocation(new Point(-1, -1), new Point(0,0)));
-        assertTrue(Move.changeLocation(new Point(-1, -1), new Point(1,0)));
+        assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(0,0)));
+        assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(1,0)));
         assertFalse(Move.isOpen(new Point(0,0)));
         assertTrue(theGame.isPlacing());
         assertFalse(theGame.lostByPieceCount());
@@ -50,8 +50,8 @@ class GameTest extends Game {
     public void lostByPieceCountTest() throws Exception {  //Tests the lostByPieceCount method
         //Set-up
         Vector<Piece> myVec = new Vector<Piece>();
-        myVec.add(new Piece(IN_BAG, pl1));
-        myVec.add(new Piece(IN_BAG, pl1 ));
+        myVec.add(new Piece(IN_BAG, theGame.pl1));
+        myVec.add(new Piece(IN_BAG, theGame.pl1 ));
         theGame.getPlayers().firstElement().setPieces(myVec);
         //Test
         assertTrue(theGame.lostByPieceCount());
@@ -60,14 +60,14 @@ class GameTest extends Game {
     @Test
     public void inMillTest() throws Exception {
         //Setup
-        Move.changeLocation(IN_BAG, new Point (0,0));
-        Move.changeLocation(IN_BAG, new Point(2,0));
-        Move.changeLocation(IN_BAG, new Point (0,1));
-        Move.changeLocation(IN_BAG, new Point(2,1));
-        Move.changeLocation(IN_BAG, new Point (0,2));
-        Move.changeLocation(IN_BAG, new Point(2,3));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,0));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,0));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,1));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,1));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,2));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,3));
         //Test
-        assertEquals(theGame.inMill(new Piece(new Point(0,0), theGame.pl1)), 1);
+        assertEquals(theGame.inMill(new Piece(new Point(0,0), theGame.pl1)), true);
     }
 
     @Test
@@ -101,38 +101,38 @@ class GameTest extends Game {
     @Test
     void noMove() {
         //Setup
-        Move.changeLocation(IN_BAG, new Point (2,0));
-        Move.changeLocation(IN_BAG, new Point(2,7));
-        Move.changeLocation(IN_BAG, new Point (2,1));
-        Move.changeLocation(IN_BAG, new Point(1,1));
-        Move.changeLocation(IN_BAG, new Point (2,2));
-        Move.changeLocation(IN_BAG, new Point(1,3));
-        Move.changeLocation(IN_BAG, new Point (2,3));
-        Move.changeLocation(IN_BAG, new Point(2,4));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (2,0));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,7));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (2,1));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(1,1));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (2,2));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(1,3));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (2,3));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,4));
         //Test
         assertTrue(theGame.noMove(theGame.pl1));
     }
 
     @Test
     void isPlacing() {
-        Move.changeLocation(IN_BAG, new Point (0,0));
-        Move.changeLocation(IN_BAG, new Point(2,0));
-        Move.changeLocation(IN_BAG, new Point (0,1));
-        Move.changeLocation(IN_BAG, new Point(2,1));
-        Move.changeLocation(IN_BAG, new Point (0,2));
-        Move.changeLocation(IN_BAG, new Point(2,2));
-        Move.changeLocation(IN_BAG, new Point (0,3));
-        Move.changeLocation(IN_BAG, new Point(2,3));
-        Move.changeLocation(IN_BAG, new Point (0,4));
-        Move.changeLocation(IN_BAG, new Point(2,4));
-        Move.changeLocation(IN_BAG, new Point (0,5));
-        Move.changeLocation(IN_BAG, new Point(2,5));
-        Move.changeLocation(IN_BAG, new Point (0,6));
-        Move.changeLocation(IN_BAG, new Point(2,6));
-        Move.changeLocation(IN_BAG, new Point (0,7));
-        Move.changeLocation(IN_BAG, new Point(2,7));
-        Move.changeLocation(IN_BAG, new Point (1,0));
-        Move.changeLocation(IN_BAG, new Point(1,4));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,0));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,0));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,1));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,1));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,2));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,2));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,3));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,3));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,4));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,4));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,5));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,5));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,6));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,6));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,7));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,7));
+        Move.changeLocation(theGame.pl1, IN_BAG, new Point (1,0));
+        Move.changeLocation(theGame.pl2, IN_BAG, new Point(1,4));
 
         assertFalse(theGame.isPlacing());
 

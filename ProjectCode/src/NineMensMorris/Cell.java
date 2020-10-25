@@ -440,9 +440,10 @@ public class Cell extends Pane {
 
          */
 
-        if (Move.changeLocation(Game.IN_BAG, this.myPair)) {
+        if (Move.changeLocation(Gui.getMyGame().getCurrentPlayer(), Game.IN_BAG, this.myPair)) {
             setPlayer(Gui.getCurrentPlayer());
             Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+            Gui.getMyGame().switchTurn();
         }
         //}
 

@@ -110,8 +110,8 @@ public abstract class Move {
     }
 
     // Move function.
-    public static boolean changeLocation(Point oldPair, Point newPair) {
-        Piece thePiece = findPiece(oldPair);
+    public static boolean changeLocation(Player player, Point oldPair, Point newPair) {
+        Piece thePiece = findPiece(player, oldPair);
 
         if (thePiece != null && isOpen(newPair) && isLegal(thePiece, newPair)) {
                 thePiece.setPair(newPair);
@@ -123,7 +123,7 @@ public abstract class Move {
     }
 
     public static boolean removePiece(Point pair) {
-        Piece thePiece = findPiece(pair);
+        Piece thePiece = findPiece(null, pair);
 
         if (thePiece != null && thePiece.getMyPlayer().getPieces().remove(thePiece)) {
             myGame.DrawQuickTable();
@@ -133,11 +133,19 @@ public abstract class Move {
     }
 
     //Helper Function for removePiece and Move
-    private static Piece findPiece(Point pair) {
-        for (Player player : myGame.getPlayers()) {
+    private static Piece findPiece(Player player, Point pair) {
+        if (player != null) {
             for (Piece piece : player.getPieces()) {
                 if (piece.getPair().equals(pair)) {
                     return piece;
+                }
+            }
+        } else {
+            for (Player players : myGame.getPlayers()) {
+                for (Piece piece : players.getPieces()) {
+                    if (piece.getPair().equals(pair)) {
+                        return piece;
+                    }
                 }
             }
         }

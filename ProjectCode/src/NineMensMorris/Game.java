@@ -13,6 +13,8 @@ public abstract class Game {
     protected Vector<Player> players; // Container of 2 players in the Game.
     protected HashMap<Point, Player> quickTable = new HashMap<Point, Player>(); //HashTable for quick reference
     public Player pl1, pl2;
+    protected Player currentPlayer;
+    protected int currentMills = 0;
 
     public static class GamePlay extends Game {
 
@@ -25,6 +27,12 @@ public abstract class Game {
         //Getters
         public Vector<Player> getPlayers() { return super.players; }
         public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
+        public Player getCurrentPlayer() { return super.currentPlayer; }
+        public int newMills() { return currentMills; }
+
+        //Setters
+        public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; }
+        public void decrementMill() { currentMills--; }
 
         //Initializers
         protected void InitPlayers() {
@@ -33,6 +41,8 @@ public abstract class Game {
             //Could use Dialog Box to get player names from users
             players.add(pl1 = new Player("Red"));
             players.add(pl2 = new Player("Blue"));
+
+            currentPlayer = pl1;
         }
 
         //Main Functions
@@ -47,8 +57,7 @@ public abstract class Game {
             }
         }
 
-        public int inMill(Piece piece) {
-            int millCount = 0;
+        public boolean inMill(Piece piece) {
             int myX = piece.getPair().x;
             int myY = piece.getPair().y;
             Player myPlayer = piece.getMyPlayer();
@@ -60,14 +69,14 @@ public abstract class Game {
                                 myPlayer,
                                 new Point(myX, (myY == 0) ? 7 : myY - 1),
                                 new Point(myX, (myY == 0) ? 6 : myY - 2))) {
-                            millCount++;
+                            currentMills++;
                         }
                         //Check two above for Y, SPECIAL CASE for myY == 6
                         if (checkMill(
                                 myPlayer,
                                 new Point(myX, myY + 1),
                                 new Point(myX, (myY == 6) ? 0 : myY + 2))) {
-                            millCount++;
+                            currentMills++;
                         }
                     break;
 
@@ -78,7 +87,7 @@ public abstract class Game {
                         case 0 -> { x1 = 1; x2 = 2; } //myX == 0
                         case 1 -> { x1 = 0; x2 = 2; } //myX == 1
                         case 2 -> { x1 = 0; x2 = 1; } //myX == 2
-                        default -> { return 0; } //Out-of-Bounds
+                        default -> { return false; } //Out-of-Bounds
                     }
 
                     //Check X per above switch
@@ -86,18 +95,20 @@ public abstract class Game {
                             myPlayer,
                             new Point(x1, myY),
                             new Point(x2, myY))) {
-                        millCount++;
+                        currentMills++;
                     }
                     //Check one below and one above for Y, SPECIAL CASE for myY == 7
                     if (checkMill(
                             myPlayer,
                             new Point(myX, myY - 1),
                             new Point(myX, (myY == 7) ? 0 : myY + 1))) {
-                        millCount++;
+                        currentMills++;
                     }
                     break;
             }
-            return millCount;
+
+            System.out.println("Current Mills = " + currentMills);
+            return (currentMills > 0);
         }
 
         //Helper Function for inMill

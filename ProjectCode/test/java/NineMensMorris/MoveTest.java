@@ -30,10 +30,10 @@ class MoveTest {
         }
 
         //Setup
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(0,0));
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(0,4));
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(1,1));
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(2,1));
+        Move.changeLocation(theGame.pl1, new Point(Game.IN_BAG), new Point(0,0));
+        Move.changeLocation(theGame.pl2, new Point(Game.IN_BAG), new Point(0,4));
+        Move.changeLocation(theGame.pl1, new Point(Game.IN_BAG), new Point(1,1));
+        Move.changeLocation(theGame.pl2, new Point(Game.IN_BAG), new Point(2,1));
 
         //Test
         assertTrue(Move.isOpen(new Point(0,1)));
@@ -64,18 +64,18 @@ class MoveTest {
 
     @Test
     void moveTestOne() throws Exception {
-        assertTrue(Move.changeLocation(Game.IN_BAG, new Point(0,0)));
-        assertTrue(Move.changeLocation(new Point(0,0), new Point(0,7)));
+        assertTrue(Move.changeLocation(theGame.pl1, Game.IN_BAG, new Point(0,0)));
+        assertTrue(Move.changeLocation(theGame.pl1, new Point(0,0), new Point(0,7)));
 
-        assertFalse(Move.changeLocation(new Point(0,7), new Point(2,7)));
+        assertFalse(Move.changeLocation(theGame.pl1, new Point(0,7), new Point(2,7)));
     }
 
     @Test
     void removePieceTest() {
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(0,0));
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(0,4));
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(1,1));
-        Move.changeLocation(new Point(Game.IN_BAG), new Point(2,1));
+        Move.changeLocation(theGame.pl1, new Point(Game.IN_BAG), new Point(0,0));
+        Move.changeLocation(theGame.pl2, new Point(Game.IN_BAG), new Point(0,4));
+        Move.changeLocation(theGame.pl1, new Point(Game.IN_BAG), new Point(1,1));
+        Move.changeLocation(theGame.pl2, new Point(Game.IN_BAG), new Point(2,1));
 
         assertFalse(Move.isOpen(new Point(0,0)));
         assertTrue(Move.removePiece(new Point(0,0)));
