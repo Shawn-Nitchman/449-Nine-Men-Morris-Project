@@ -1,4 +1,4 @@
-package ProjectCode.src.NineMensMorris;
+package NineMensMorris;
 import java.awt.*;
 
 public class Piece {

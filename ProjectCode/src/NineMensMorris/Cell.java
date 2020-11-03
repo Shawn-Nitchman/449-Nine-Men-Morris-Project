@@ -1,4 +1,4 @@
-package ProjectCode.src.NineMensMorris;
+package NineMensMorris;
 
 import javafx.scene.layout.Pane;
 //import javafx.scene.paint.Color;

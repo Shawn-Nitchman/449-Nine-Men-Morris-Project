@@ -1,11 +1,8 @@
-package ProjectCode.src.NineMensMorris;
-
-import ProjectCode.src.NineMensMorris.Cell;
-import ProjectCode.src.NineMensMorris.Game;
-import ProjectCode.src.NineMensMorris.Style;
+package NineMensMorris;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
