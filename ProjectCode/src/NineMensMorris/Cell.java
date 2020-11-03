@@ -435,9 +435,35 @@ public class Cell extends Pane {
 
     // This is called when a validSpace is clicked to handle how a piece is placed
     private void handleClick(){
-        if (Move.move(((Gui.getCurrentPlayer() == "R") ? Gui.getMyGame().pl1: Gui.getMyGame().pl2), Game.IN_BAG, this.myPair)) {
+//        System.out.println("clicked" + " " + this.myPair.toString() + " myI = " + this.myI + " myJ = " + this.myJ);
+        // if valid move, then move and change whose turn it is
+        // need player, old pair & new pair for Move.move()
+        //if(player == " " && currentPlayer != ""){
+
+        /*
+
+        Recommend putting if statements to handle each different click.
+
+        if (click on the actual piece) { start highlighting the locations to move. }
+
+         */
+        if (Gui.getMyGame().newMills() > 0 ) {
+
+        }
+
+        if (Move.changeLocation(Gui.getMyGame().getCurrentPlayer(), Game.IN_BAG, this.myPair)) {
             setPlayer(Gui.getCurrentPlayer());
             Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+            Gui.getMyGame().switchTurn();
+            Piece thePiece = null;
+            for (Piece piece : Gui.getMyGame().quickTable.get(myPair).getPieces()) {
+                if (piece.getPair().equals(myPair)) {
+                    thePiece = piece;
+                }
+            }
+            if (thePiece != null) {
+                System.out.println(Gui.getMyGame().inMill(thePiece));
+            }
         }
     }
     

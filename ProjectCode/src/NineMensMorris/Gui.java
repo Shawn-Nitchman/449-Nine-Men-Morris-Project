@@ -79,11 +79,27 @@ public class Gui extends Application{
     public static void removeVBoxElement(String id) {
 
         if (id == "R") {
-            ///Some how index zero is the actual player's name "Player1/Player2" Please solve this.
-            player1.getChildren().remove(1);
+            ///Some how index zero is the actualy player's name "Player1/Player2" Please solve this.
+            //player1.getChildren().remove(1);
+            Node theNode = null;
+            for (Node node : player1.getChildren()) {
+                if (node instanceof Ellipse) {
+                    theNode = node;
+                    break;
+                }
+            }
+            if (theNode != null) {player1.getChildren().remove(theNode); }
         }
         if (id == "B") {
-            player2.getChildren().remove(1);
+            //player2.getChildren().remove(1);
+            Node theNode = null;
+            for (Node node : player2.getChildren()) {
+                if (node instanceof Ellipse) {
+                    theNode = node;
+                    break;
+                }
+            }
+            if (theNode != null) {player2.getChildren().remove(theNode); }
         }
     }
 
