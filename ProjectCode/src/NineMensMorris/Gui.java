@@ -1,11 +1,11 @@
-package NineMensMorris;
-    
-import java.util.concurrent.atomic.AtomicReference;
+package ProjectCode.src.NineMensMorris;
 
+import ProjectCode.src.NineMensMorris.Cell;
+import ProjectCode.src.NineMensMorris.Game;
+import ProjectCode.src.NineMensMorris.Style;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -18,13 +18,9 @@ import javafx.scene.text.Text;
 /// All Structure extended from Application are static. That was why we could not use the non-static methods.
 public class Gui extends Application{
 	private static Game.GamePlay myGame = new Game.GamePlay();
-
     private static String currentPlayer = "R";
     private Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
-
-
-
     public static String getCurrentPlayer() { return currentPlayer; }
     public static Game.GamePlay getMyGame() { return myGame; }
 
@@ -67,12 +63,12 @@ public class Gui extends Application{
            if(name.equals("Player1")){
                Ellipse ellipse = new Ellipse(20,20,20,20);
                ellipse.setStroke(Color.BLACK);
-               ellipse.setFill(Color.RED);
+               ellipse.setFill(Style.darkRed);
                vbox.getChildren().add(ellipse);
            }else{
                Ellipse ellipse = new Ellipse(20,20,20,20);
                ellipse.setStroke(Color.BLACK);
-               ellipse.setFill(Color.BLUE);
+               ellipse.setFill(Style.darkBlue);
                vbox.getChildren().add(ellipse);
            }
         }
@@ -118,7 +114,6 @@ public class Gui extends Application{
                 gridpane.add(cell[i][j], i, j);
             }
         }
-
         return gridpane;
     }
 

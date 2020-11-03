@@ -1,4 +1,4 @@
-package NineMensMorris;
+package ProjectCode.src.NineMensMorris;
 import java.awt.*;
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package NineMensMorris;
+package ProjectCode.src.NineMensMorris;
 import java.util.Vector;
 
 public class Player {

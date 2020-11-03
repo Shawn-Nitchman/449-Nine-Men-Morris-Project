@@ -1,24 +1,22 @@
-package NineMensMorris;
+package ProjectCode.src.NineMensMorris;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
+//import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 
 import java.awt.*;
 
+// Cells make up the 7x7 grid on the board of playable and non-playable places
 public class Cell extends Pane {
-
-
-    private boolean validSpace;
+    private boolean validSpace; // This tells us if the place is playable or not
     private Point myPair = new Point (-99,-99); //add pair for valid space position
-    private int myI, myJ;
 
     private Point getCoords(int i, int j){
         Point oldCoord = new Point(i,j);
         return Move.getCoordTable().get(oldCoord);
     }
-    //This takes the value of x (should be 1-7) and adds it to 96
+    //This takes the value of x (should be 0-6) and adds it to 97
     //to get the ascii value of a-g
     public char convertIntToChar(int x) {
         x = x + 97;
@@ -66,366 +64,376 @@ public class Cell extends Pane {
         }
     }
 
+    // Cell constructor checks if it is a validSpace and initializes drawings for the cell
+    // Then, it initializes the coordinates
     public Cell(int i, int j){
         //setStyle("-fx-border-color : black");
         validSpace = checkValidSpace(i, j);
-
-        //This whole switch initializes the drawings for the board for a new game
-        switch(i){
-            case 0:
-                if(j == 1 || j == 2 || j == 4 || j == 5) {
-                    Line line1 = new Line();
-
-                    //Can we separate the drawing code and the gameplay code?
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    getChildren().add(line1);
-                }else if(j == 0){
-                    Line line1 = new Line();
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }else if (j == 3){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }else {
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }
-                break;
-            case 1:
-                if(j == 0 || j == 6) {
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty());
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-                    getChildren().add(line1);
-                }else if(j == 1){
-                    Line line1 = new Line();
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }else if(j == 2 || j == 4){
-                    Line line1 = new Line();
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-                    getChildren().add(line1);
-                }else if(j == 3){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else{
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }
-
-                break;
-
-            case 2:
-                if(j == 0 || j == 1 || j == 5 || j == 6){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty());
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-                    getChildren().add(line1);
-                }else if(j == 2){
-                    Line line1 = new Line();
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }else if(j == 3){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else if(j == 4){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }
-                break;
-            case 3:
-                if(j == 0 || j == 4){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty());
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }else if(j == 1 || j == 5){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else if(j == 2 || j == 6){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty());
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1,line2);
-                }
-                break;
-            case 4:
-                if(j == 0 || j == 1 || j == 5 || j == 6){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty());
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-                    getChildren().add(line1);
-                }else if(j == 2){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else if(j == 3){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-                    getChildren().addAll(line1, line2);
-                }else{
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }
-                break;
-            case 5:
-                if(j == 0 || j == 6){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty());
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-                    getChildren().add(line1);
-                }else if(j == 1){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else if(j == 2 || j == 4){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-                    getChildren().add(line1);
-                }else if(j == 3){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty());
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else{
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }
-                break;
-            case 6:
-                if(j == 0){
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else if(j == 1 || j == 2 || j== 4 || j == 5){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-                    getChildren().add(line1);
-                }else if(j ==3){
-                    Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
-                    line1.startXProperty().bind(this.widthProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty());
-
-                    Line line2 = new Line();
-                    line2.startYProperty().bind(this.heightProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }else{
-                    Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
-                    line1.startYProperty().bind(this.heightProperty().divide(2));
-                    line1.endXProperty().bind(this.widthProperty().divide(2));
-                    line1.endYProperty().bind(this.heightProperty().divide(2));
-
-                    Line line2 = new Line();
-                    line2.startXProperty().bind(this.widthProperty().divide(2));
-                    line2.endXProperty().bind(this.widthProperty().divide(2));
-                    line2.endYProperty().bind(this.heightProperty().divide(2));
-
-                    getChildren().addAll(line1, line2);
-                }
-                break;
-        }
-
+        initializeDrawings(i, j);     
         this.setPrefSize(150,150); // sets default cell size (refactor sometime!)
-
-        //This checks if the cell is a playable space on the board
+        initializeCoords(i, j, validSpace);
+    }
+    
+    //This initializes the coordinates for our coordinate system
+    //given the position on the 7x7 grid and whether it's a playable space
+    private void initializeCoords(int i, int j, boolean validSpace) {
         if (validSpace == true){
             //Assign myPair via coordTable
             this.myPair = new Point(getCoords(i, j));
-            this.myI = i; this.myJ = j;
             this.setOnMouseClicked(e -> handleClick());
-            // add on hover actions
+            this.setOnMouseEntered(e -> highlightCell());
+            this.setOnMouseExited(e -> undoHighlight());
         }
     }
+    
+  //This whole switch initializes the drawings for the board for a new game
+   private void initializeDrawings(int i, int j) {
+	   this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
+	   switch(i){
+       case 0:
+           if(j == 1 || j == 2 || j == 4 || j == 5) {
+               Line line1 = new Line();
 
+               //Can we separate the drawing code and the gameplay code?
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               getChildren().add(line1);
+           }else if(j == 0){
+               Line line1 = new Line();
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }else if (j == 3){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }else {
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }
+           break;
+       case 1:
+           if(j == 0 || j == 6) {
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty());
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+               getChildren().add(line1);
+           }else if(j == 1){
+               Line line1 = new Line();
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }else if(j == 2 || j == 4){
+               Line line1 = new Line();
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+               getChildren().add(line1);
+           }else if(j == 3){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else{
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }
+
+           break;
+
+       case 2:
+           if(j == 0 || j == 1 || j == 5 || j == 6){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty());
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+               getChildren().add(line1);
+           }else if(j == 2){
+               Line line1 = new Line();
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }else if(j == 3){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else if(j == 4){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }
+           break;
+       case 3:
+           if(j == 0 || j == 4){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty());
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }else if(j == 1 || j == 5){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else if(j == 2 || j == 6){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty());
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1,line2);
+           }
+           break;
+       case 4:
+           if(j == 0 || j == 1 || j == 5 || j == 6){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty());
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+               getChildren().add(line1);
+           }else if(j == 2){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else if(j == 3){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+               getChildren().addAll(line1, line2);
+           }else{
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }
+           break;
+       case 5:
+           if(j == 0 || j == 6){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty());
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+               getChildren().add(line1);
+           }else if(j == 1){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else if(j == 2 || j == 4){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+               getChildren().add(line1);
+           }else if(j == 3){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty());
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else{
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }
+           break;
+       case 6:
+           if(j == 0){
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.startYProperty().bind(this.heightProperty().subtract(this.getHeight()));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else if(j == 1 || j == 2 || j== 4 || j == 5){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+               getChildren().add(line1);
+           }else if(j ==3){
+               Line line1 = new Line(this.getWidth()/2,0,this.getWidth()/2,this.getHeight());
+               line1.startXProperty().bind(this.widthProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty());
+
+               Line line2 = new Line();
+               line2.startYProperty().bind(this.heightProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }else{
+               Line line1 = new Line(0,this.getHeight()/2,this.getWidth(),this.getHeight()/2);
+               line1.startYProperty().bind(this.heightProperty().divide(2));
+               line1.endXProperty().bind(this.widthProperty().divide(2));
+               line1.endYProperty().bind(this.heightProperty().divide(2));
+
+               Line line2 = new Line();
+               line2.startXProperty().bind(this.widthProperty().divide(2));
+               line2.endXProperty().bind(this.widthProperty().divide(2));
+               line2.endYProperty().bind(this.heightProperty().divide(2));
+
+               getChildren().addAll(line1, line2);
+           }
+           break;
+           }
+   }
+
+    // This is called when a validSpace is clicked to handle how a piece is placed
     private void handleClick(){
 //        System.out.println("clicked" + " " + this.myPair.toString() + " myI = " + this.myI + " myJ = " + this.myJ);
         // if valid move, then move and change whose turn it is
@@ -457,8 +465,17 @@ public class Cell extends Pane {
                 System.out.println(Gui.getMyGame().inMill(thePiece));
             }
         }
-        //}
-
+    }
+    
+    private void highlightCell() {
+    	this.setStyle("-fx-border-color: #7895a2; "
+    		    + "-fx-background-color: #afc1cc; "
+    		    + "-fx-border-width: 15; "
+    		    + "-fx-border-radius: 50%;");
+    }
+    
+    private void undoHighlight() {
+    	this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
     }
 
 //    public String getPlayer(){
@@ -466,8 +483,6 @@ public class Cell extends Pane {
 //    }
 
     public void setPlayer(String c){
-
-
         Ellipse ellipse = new Ellipse(this.getWidth()/3,this.getHeight()/3, this.getWidth()/3,this.getHeight()/3);
         ellipse.centerXProperty().bind(this.widthProperty().divide(2));
         ellipse.centerYProperty().bind(this.heightProperty().divide(2));
@@ -484,29 +499,15 @@ public class Cell extends Pane {
                 }
                 */
 
-            ellipse.setFill(javafx.scene.paint.Color.RED);
-
+            ellipse.setFill(Style.darkRed);
             getChildren().add(ellipse);
             //Track backward for pl1 indexes.        // Index 8 - 0;
-
-
             Gui.removeVBoxElement("R");
 
-
-
-
         } else if(c == "B") {
-            ellipse.setFill(Color.BLUE);
+            ellipse.setFill(Style.darkBlue);
             getChildren().add(ellipse);
-
-
             Gui.removeVBoxElement("B");
-
         }
-
-
-
-
     }
-
 }

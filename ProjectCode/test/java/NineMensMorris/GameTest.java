@@ -1,4 +1,8 @@
 package NineMensMorris;
+import ProjectCode.src.NineMensMorris.Game;
+import ProjectCode.src.NineMensMorris.Move;
+import ProjectCode.src.NineMensMorris.Piece;
+import ProjectCode.src.NineMensMorris.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest extends Game {
 
-    Game.GamePlay theGame;
+    NineMensMorris.GamePlay theGame;
 
     @BeforeEach
     void setUp() {
