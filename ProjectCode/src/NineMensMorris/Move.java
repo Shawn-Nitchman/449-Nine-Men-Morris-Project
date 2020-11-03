@@ -21,6 +21,8 @@ public abstract class Move {
     protected static Game.GamePlay getMyGame() { return myGame; }
 
     //Initializers
+    //This Table has the GUI grid coords as the keys and playing coords as values
+    //For transforming between the two systems
     private static void InitCoordTable() {
         coordTable = new HashMap<Point, Point>();
 
@@ -56,6 +58,8 @@ public abstract class Move {
         coordTable.put(new Point(6, 6), new Point(2, 4));
     }
 
+    //This table has the 24 playable places in playing coords as the keys and the places one can move from that key as values
+    //For deciding if a move is legal and if a player has no moves left
     private static void InitMoveTable() {
         moveTable = new HashMap<Point, ArrayList<Point>>();
 
@@ -93,6 +97,8 @@ public abstract class Move {
     }
 
     //Main Functions
+    //Pass in a point in question, returns if that space is open
+    //Uses the QuickTable
     public static boolean isOpen(Point pair) {
 
         for (Point point : myGame.getQuickTable().keySet()) {
@@ -110,6 +116,8 @@ public abstract class Move {
     }
 
     // Move function.
+    //
+    //WARNING: Modifies piece vector
     public static boolean changeLocation(Player player, Point oldPair, Point newPair) {
         Piece thePiece = findPiece(player, oldPair);
 
@@ -122,6 +130,7 @@ public abstract class Move {
         return false;
     }
 
+    //
     public static boolean removePiece(Point pair) {
         Piece thePiece = findPiece(null, pair);
 

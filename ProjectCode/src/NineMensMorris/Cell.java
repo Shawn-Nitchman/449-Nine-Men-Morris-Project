@@ -439,11 +439,23 @@ public class Cell extends Pane {
         if (click on the actual piece) { start highlighting the locations to move. }
 
          */
+        if (Gui.getMyGame().newMills() > 0 ) {
+
+        }
 
         if (Move.changeLocation(Gui.getMyGame().getCurrentPlayer(), Game.IN_BAG, this.myPair)) {
             setPlayer(Gui.getCurrentPlayer());
             Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
             Gui.getMyGame().switchTurn();
+            Piece thePiece = null;
+            for (Piece piece : Gui.getMyGame().quickTable.get(myPair).getPieces()) {
+                if (piece.getPair().equals(myPair)) {
+                    thePiece = piece;
+                }
+            }
+            if (thePiece != null) {
+                System.out.println(Gui.getMyGame().inMill(thePiece));
+            }
         }
         //}
 
