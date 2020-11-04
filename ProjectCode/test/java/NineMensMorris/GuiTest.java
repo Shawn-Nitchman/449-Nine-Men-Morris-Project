@@ -2,8 +2,6 @@ package NineMensMorris;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class GuiTest {
 
     @org.junit.jupiter.api.BeforeEach
@@ -17,6 +15,7 @@ class GuiTest {
 
     @Test
     void start() {
+
     }
 
     @Test

@@ -120,6 +120,8 @@ public abstract class Game {
                     myQuickTable.get(p2).equals(player);
         }
 
+
+
         public boolean isPlacing() {
             //If the quickTable and the sum of the player's pieces vectors are not equal,
             // there are still unplaced pieces
