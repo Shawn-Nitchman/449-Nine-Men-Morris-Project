@@ -42,7 +42,6 @@ public class Gui extends Application{
         Scene scene = new Scene(border, 850, 650);
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 
     // Add to draw/visual class

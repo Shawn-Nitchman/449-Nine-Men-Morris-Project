@@ -1,15 +1,17 @@
 package NineMensMorris;
 
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-//import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 
 import java.awt.*;
 
+//import javafx.scene.paint.Color;
+
 // Cells make up the 7x7 grid on the board of playable and non-playable places
 public class Cell extends Pane {
-    private boolean validSpace; // This tells us if the place is playable or not
+    private boolean validSpace; // This tells us if the cell is playable or not
     private Point myPair = new Point (-99,-99); //add pair for valid space position
 
     private Point getCoords(int i, int j){
@@ -437,32 +439,37 @@ public class Cell extends Pane {
     private void handleClick(){
 //        System.out.println("clicked" + " " + this.myPair.toString() + " myI = " + this.myI + " myJ = " + this.myJ);
         // if valid move, then move and change whose turn it is
-        // need player, old pair & new pair for Move.move()
-        //if(player == " " && currentPlayer != ""){
 
         /*
-
         Recommend putting if statements to handle each different click.
-
         if (click on the actual piece) { start highlighting the locations to move. }
-
          */
-        if (Gui.getMyGame().newMills() > 0 ) {
-
+        if (Gui.getMyGame().newMills() > 0  &&
+                !(Gui.getMyGame().getQuickTable().get(myPair).equals(Gui.getCurrentPlayer()))) {
+            removePiece();
+            Gui.getMyGame().decrementMill();
+            if(Gui.getMyGame().newMills() == 0){
+                Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+                Gui.getMyGame().switchTurn();
+            }
         }
 
-        if (Move.changeLocation(Gui.getMyGame().getCurrentPlayer(), Game.IN_BAG, this.myPair)) {
-            setPlayer(Gui.getCurrentPlayer());
-            Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
-            Gui.getMyGame().switchTurn();
+        else if (Move.changeLocation(Gui.getMyGame().getCurrentPlayer(), Game.IN_BAG, this.myPair)) {
+            placePiece(Gui.getCurrentPlayer());
+
             Piece thePiece = null;
+            // takes in pair and gets pieces of a given player
             for (Piece piece : Gui.getMyGame().quickTable.get(myPair).getPieces()) {
                 if (piece.getPair().equals(myPair)) {
                     thePiece = piece;
                 }
             }
-            if (thePiece != null) {
-                System.out.println(Gui.getMyGame().inMill(thePiece));
+            if (thePiece != null) { //checks to see if piece is in a mill after every placement
+              //  System.out.println(Gui.getMyGame().inMill(thePiece));
+                if (!Gui.getMyGame().inMill(thePiece)){
+                    Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+                    Gui.getMyGame().switchTurn();
+                }
             }
         }
     }
@@ -478,36 +485,37 @@ public class Cell extends Pane {
     	this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
     }
 
-//    public String getPlayer(){
-//        return player;
-//    }
+    public void placePiece(String color){
+        drawPiece();
+        colorVisualPiece(color);
+    }
 
-    public void setPlayer(String c){
-        Ellipse ellipse = new Ellipse(this.getWidth()/3,this.getHeight()/3, this.getWidth()/3,this.getHeight()/3);
-        ellipse.centerXProperty().bind(this.widthProperty().divide(2));
-        ellipse.centerYProperty().bind(this.heightProperty().divide(2));
-        ellipse.radiusXProperty().bind(this.widthProperty().divide(3));
-        ellipse.radiusYProperty().bind(this.heightProperty().divide(3));
-        ellipse.setStroke(javafx.scene.paint.Color.BLACK);
+    public void drawPiece(){
+        Piece.drawVisualPiece(this.getWidth()/3, this.getHeight()/3,
+                this.widthProperty(), this.heightProperty());
+       }
 
-        if(c == "R"){
-                /*
-                for (Node object : player1.getChildrenUnmodifiable()) {
-                    if (object.getClass().isInstance(ellipse)) {
-                        player1.getChildren().remove(object);
-                    }
-                }
-                */
-
-            ellipse.setFill(Style.darkRed);
-            getChildren().add(ellipse);
-            //Track backward for pl1 indexes.        // Index 8 - 0;
+    public void colorVisualPiece(String color){
+        if(color == "R"){
+            Piece.visualPiece.setFill(Style.darkRed);
+            getChildren().add(Piece.visualPiece);
             Gui.removeVBoxElement("R");
-
-        } else if(c == "B") {
-            ellipse.setFill(Style.darkBlue);
-            getChildren().add(ellipse);
+        } else if(color == "B") {
+            Piece.visualPiece.setFill(Style.darkBlue);
+            getChildren().add(Piece.visualPiece);
             Gui.removeVBoxElement("B");
         }
+    }
+
+    private void removePiece(){
+        Node theNode = null;
+        for (Node node : this.getChildren()) {
+            if (node instanceof Ellipse) {
+                theNode = node;
+                break;
+            }
+        }
+        if (theNode != null) {this.getChildren().remove(theNode); }
+        Move.removePiece(myPair);
     }
 }

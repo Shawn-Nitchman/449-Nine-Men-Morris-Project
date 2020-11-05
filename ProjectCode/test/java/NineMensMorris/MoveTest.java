@@ -1,7 +1,4 @@
 package NineMensMorris;
-import ProjectCode.src.NineMensMorris.Game;
-import ProjectCode.src.NineMensMorris.Move;
-import ProjectCode.src.NineMensMorris.Player;
 import org.junit.jupiter.api.Test;
 import java.util.Vector;
 import java.awt.*;
@@ -9,7 +6,7 @@ import java.awt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest {
-    NineMensMorris.GamePlay theGame;
+    Game.GamePlay theGame;
 
 
     @org.junit.jupiter.api.BeforeEach
