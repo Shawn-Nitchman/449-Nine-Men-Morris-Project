@@ -67,7 +67,7 @@ class GameTest extends Game {
         Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,2));
         Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,3));
         //Test
-        assertEquals(theGame.inMill(new Piece(new Point(0,0), theGame.pl1)), true);
+        assertTrue(theGame.inMill(theGame.pl1, new Point(0, 0)));
     }
 
     @Test

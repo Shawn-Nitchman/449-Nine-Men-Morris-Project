@@ -15,6 +15,8 @@ public abstract class Game {
     public Player pl1, pl2;
     protected Player currentPlayer;
     protected int currentMills = 0;
+    protected boolean midMove = false;
+    protected Point lastPair = new Point(-99,-99);
 
     public static class GamePlay extends Game {
 
@@ -29,10 +31,15 @@ public abstract class Game {
         public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
         public Player getCurrentPlayer() { return super.currentPlayer; }
         public int newMills() { return currentMills; }
+        public boolean unresolvedMills() {return true ? currentMills > 0 : false;}
+        public boolean isMidMove() {return midMove; }
+        public Point lastPoint() {return lastPair; }
 
         //Setters
+        public void setLastPoint(Point pair) {lastPair = pair; }
         public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; }
         public void decrementMill() { currentMills--; }
+        public void setMidMove() {midMove = !midMove; }
 
         //Initializers
         protected void InitPlayers() {
@@ -50,17 +57,16 @@ public abstract class Game {
             quickTable = new HashMap<Point, Player>();
             for (Player player : players) {
                 for (Piece piece : player.getPieces()) {
-                    if (!piece.getPair().equals(new Point(IN_BAG))) {
+                    if (!piece.getPair().equals(IN_BAG)) {
                         getQuickTable().put(piece.getPair(), player);
                     }
                 }
             }
         }
 
-        public boolean inMill(Piece piece) {
-            int myX = piece.getPair().x;
-            int myY = piece.getPair().y;
-            Player myPlayer = piece.getMyPlayer();
+        public boolean inMill(Player myPlayer, Point pair) {
+            int myX = pair.x;
+            int myY = pair.y;
 
             switch (myY % 2) {//Mod operator for even/odd
                 case 0: //even
