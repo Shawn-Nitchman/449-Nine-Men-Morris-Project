@@ -9,11 +9,16 @@ public abstract class Game {
     public static final Point IN_BAG = new Point(-1,-1);
     public static final int START_COUNT = 9;
 
+
+
     //Variables
     protected Vector<Player> players; // Container of 2 players in the Game.
     protected HashMap<Point, Player> quickTable = new HashMap<Point, Player>(); //HashTable for quick reference
+    public enum GameState {Draw, MidMove, Mill, Moving, Placing, Finished}
+    public GameState gameState = GameState.Placing;
     public Player pl1, pl2;
     protected Player currentPlayer;
+    protected int moveCount = 0;
     protected int currentMills = 0;
     protected boolean midMove = false;
     protected Point lastPair = new Point(-99,-99);
@@ -31,15 +36,16 @@ public abstract class Game {
         public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
         public Player getCurrentPlayer() { return super.currentPlayer; }
         public int newMills() { return currentMills; }
-        public boolean unresolvedMills() {return true ? currentMills > 0 : false;}
+        public boolean unresolvedMills() {return currentMills > 0;}
         public boolean isMidMove() {return midMove; }
-        public Point lastPoint() {return lastPair; }
+        public Point getLastPoint() {return lastPair; }
 
         //Setters
         public void setLastPoint(Point pair) {lastPair = pair; }
         public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; }
+        public void incrementMoveCount() {moveCount++; }
         public void decrementMill() { currentMills--; }
-        public void setMidMove() {midMove = !midMove; }
+        public void switchMidMove() {midMove = !midMove; }
 
         //Initializers
         protected void InitPlayers() {
@@ -64,7 +70,18 @@ public abstract class Game {
             }
         }
 
+        public void updateGameState() {
+            gameState = GameState.Moving;
+            if (isPlacing()) {gameState = GameState.Placing;}
+            if (midMove) {gameState = GameState.MidMove; }
+            if (unresolvedMills()) {gameState = GameState.Mill; }
+            if (moveCount >= 150) {gameState = GameState.Draw; }
+            for (Player player : players) {
+                if (noMove(player) || lostByPieceCount(player)) {gameState = GameState.Finished; }
+            }
+        }
         public boolean inMill(Player myPlayer, Point pair) {
+            currentMills = 0;
             int myX = pair.x;
             int myY = pair.y;
 
@@ -114,6 +131,7 @@ public abstract class Game {
             }
 
             System.out.println("Current Mills = " + currentMills);
+            if (currentMills > 0) {gameState = GameState.Mill; }
             return (currentMills > 0);
         }
 
@@ -132,16 +150,15 @@ public abstract class Game {
             return !(getQuickTable().keySet().size() == pl1.getPieces().size() + pl2.getPieces().size());
         }
 
-        public boolean lostByPieceCount() {
-            for (Player player : this.players) {
+        public boolean lostByPieceCount(Player player) {
                 if (player.hasTwoPieces()) return true;
-            }
             return false;
         }
 
         public boolean noMove(Player player) {
 
-            if (player.isFlying()) return false;
+            if (player.isFlying() || isPlacing()) return false;
+            if (getQuickTable().keySet().size() < 9) {return false; }
 
             for (Map.Entry<Point, Player> myPair : getQuickTable().entrySet()) {
                 if (myPair.getValue().equals(player)) {

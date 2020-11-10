@@ -28,7 +28,7 @@ class GameTest extends Game {
         assertTrue(Move.changeLocation(theGame.pl1, new Point(-1, -1), new Point(1,0)));
         assertFalse(Move.isOpen(new Point(0,0)));
         assertTrue(theGame.isPlacing());
-        assertFalse(theGame.lostByPieceCount());
+        assertFalse(theGame.lostByPieceCount(pl1));
 
     }
 
@@ -54,7 +54,7 @@ class GameTest extends Game {
         myVec.add(new Piece(IN_BAG, theGame.pl1 ));
         theGame.getPlayers().firstElement().setPieces(myVec);
         //Test
-        assertTrue(theGame.lostByPieceCount());
+        assertTrue(theGame.lostByPieceCount(pl1));
 
     }
     @Test
