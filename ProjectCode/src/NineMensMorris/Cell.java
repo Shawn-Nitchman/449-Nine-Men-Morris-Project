@@ -455,16 +455,6 @@ public class Cell extends Pane {
                 "toString : " + e.toString() + "\n");
         */
         switch (theGame.gameState) {
-            //Game Ending Flags currently don't activate until the click after the win
-            //These might have to be moved to a better location in the control flow
-            case Finished:
-                //Display Winner's Dialog Box
-                System.out.println(thePlayer.getName() + ": Lost!");
-                return;
-            case Draw:
-                //Display Draw Dialog Box
-                System.out.println("DRAW");
-                return;
             case Mill:
                 //Try to Remove piece at this location
                 if (qTable.get(myPair) != null && qTable.get(myPair) != thePlayer) {
@@ -474,10 +464,10 @@ public class Cell extends Pane {
                     if (Gui.getMyGame().newMills() == 0) {
                         Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
                         theGame.switchTurn();
-                        return;
+                        break;
                     }
                 }
-                return;
+                break;
             case MidMove:
                 //Try to Move lastPiece to new Location
                 if (Move.changeLocation(thePlayer, theGame.getLastPoint(), this.myPair)) {
@@ -488,7 +478,7 @@ public class Cell extends Pane {
                         theGame.switchTurn();
                     }
                 }
-                return;
+                break;
             case Placing:
                 //Place piece on board
                 if (Move.changeLocation(thePlayer, Game.IN_BAG, this.myPair)) {
@@ -499,7 +489,7 @@ public class Cell extends Pane {
                         theGame.switchTurn();
                     }
                 }
-                return;
+                break;
             case Moving:
                 //Capture first click, change myGame.midMove to true
                 if (qTable.get(myPair) != null && qTable.get(myPair).equals(thePlayer)) {
@@ -508,7 +498,17 @@ public class Cell extends Pane {
                     theGame.updateGameState();
                     removeVisualPiece();
                 }
-                return;
+                break;
+        }
+        switch (theGame.gameState) {
+            case Finished:
+                //Display Winner's Dialog Box
+                System.out.println(thePlayer.getName() + ": WON!!");
+                break;
+            case Draw:
+                //Display Draw Dialog Box
+                System.out.println("DRAW");
+                break;
         }
     }
 

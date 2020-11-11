@@ -9,8 +9,6 @@ public abstract class Game {
     public static final Point IN_BAG = new Point(-1,-1);
     public static final int START_COUNT = 9;
 
-
-
     //Variables
     protected Vector<Player> players; // Container of 2 players in the Game.
     protected HashMap<Point, Player> quickTable = new HashMap<Point, Player>(); //HashTable for quick reference
