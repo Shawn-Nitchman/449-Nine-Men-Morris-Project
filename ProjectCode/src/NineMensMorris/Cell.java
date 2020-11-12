@@ -13,7 +13,8 @@ import java.awt.*;
 public class Cell extends Pane {
     private boolean validSpace; // This tells us if the cell is playable or not
     private Point myPair = new Point (-99,-99); //add pair for valid space position
-    private boolean hoverHighlight;
+    //private boolean hoverHighlight;
+    private boolean availableSpace; // This indicates if you can move a piece here
     private Point getCoords(int i, int j){
         Point oldCoord = new Point(i,j);
         return Move.getCoordTable().get(oldCoord);
@@ -69,7 +70,7 @@ public class Cell extends Pane {
     // Cell constructor checks if it is a validSpace and initializes drawings for the cell
     // Then, it initializes the coordinates
     public Cell(int i, int j){
-        this.hoverHighlight = false;
+        this.availableSpace = false;
         validSpace = checkValidSpace(i, j);
         initializeDrawings(i, j);     
         this.setPrefSize(150,150); // sets default cell size (refactor sometime!)
@@ -475,7 +476,6 @@ public class Cell extends Pane {
     }
     
     private void hoverHighlightCell() {
-        this.hoverHighlight = true;
     	this.setStyle("-fx-border-color:" + Style.midBlueHex
     		    + "; -fx-background-color:" + Style.lightBlueHex
     		    + "; -fx-border-width: 15; "
@@ -483,19 +483,27 @@ public class Cell extends Pane {
     }
     
     private void undoHoverHighlight() {
-        if (this.hoverHighlight == true){
+        if (this.availableSpace == false){
             this.setStyle("-fx-background-color: " + Style.lightBlueHex
                     + "; -fx-text-fill: white;");
-            this.hoverHighlight = false;
+        }
+        else{
+            highlightAvailableSpace();
         }
     }
 
     private void highlightAvailableSpace(){
-
+        this.setStyle("-fx-border-color:" + Style.availableMoveHex
+                + "; -fx-background-color:" + Style.lightBlueHex
+                + "; -fx-border-width: 15; "
+                + "-fx-border-radius: 50%;");
     }
 
-    private boolean canMoveHere(){
-        return false;
+    public void showAvailableSpaces(Point currentLocation){
+        // use moveTable to return the points that are available moves
+        // check if the returned points are open?
+        // use getCellFromPair hashmap to get the cells to highlight
+        // each cell returned must call highlightAvailableSpace
     }
 
     public void placePiece(String color){
