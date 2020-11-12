@@ -13,7 +13,7 @@ import java.awt.*;
 public class Cell extends Pane {
     private boolean validSpace; // This tells us if the cell is playable or not
     private Point myPair = new Point (-99,-99); //add pair for valid space position
-
+    private boolean hoverHighlight;
     private Point getCoords(int i, int j){
         Point oldCoord = new Point(i,j);
         return Move.getCoordTable().get(oldCoord);
@@ -69,7 +69,7 @@ public class Cell extends Pane {
     // Cell constructor checks if it is a validSpace and initializes drawings for the cell
     // Then, it initializes the coordinates
     public Cell(int i, int j){
-        //setStyle("-fx-border-color : black");
+        this.hoverHighlight = false;
         validSpace = checkValidSpace(i, j);
         initializeDrawings(i, j);     
         this.setPrefSize(150,150); // sets default cell size (refactor sometime!)
@@ -83,8 +83,8 @@ public class Cell extends Pane {
             //Assign myPair via coordTable
             this.myPair = new Point(getCoords(i, j));
             this.setOnMouseClicked(e -> handleClick());
-            this.setOnMouseEntered(e -> highlightCell());
-            this.setOnMouseExited(e -> undoHighlight());
+            this.setOnMouseEntered(e -> hoverHighlightCell());
+            this.setOnMouseExited(e -> undoHoverHighlight());
         }
     }
     
@@ -474,15 +474,28 @@ public class Cell extends Pane {
         }
     }
     
-    private void highlightCell() {
-    	this.setStyle("-fx-border-color: #7895a2; "
-    		    + "-fx-background-color: #afc1cc; "
-    		    + "-fx-border-width: 15; "
+    private void hoverHighlightCell() {
+        this.hoverHighlight = true;
+    	this.setStyle("-fx-border-color:" + Style.midBlueHex
+    		    + "; -fx-background-color:" + Style.lightBlueHex
+    		    + "; -fx-border-width: 15; "
     		    + "-fx-border-radius: 50%;");
     }
     
-    private void undoHighlight() {
-    	this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
+    private void undoHoverHighlight() {
+        if (this.hoverHighlight == true){
+            this.setStyle("-fx-background-color: " + Style.lightBlueHex
+                    + "; -fx-text-fill: white;");
+            this.hoverHighlight = false;
+        }
+    }
+
+    private void highlightAvailableSpace(){
+
+    }
+
+    private boolean canMoveHere(){
+        return false;
     }
 
     public void placePiece(String color){
