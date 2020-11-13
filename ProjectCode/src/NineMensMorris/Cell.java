@@ -15,7 +15,9 @@ import java.util.HashMap;
 // Cells make up the 7x7 grid on the board of playable and non-playable places
 public class Cell extends Pane {
     private boolean validSpace; // This tells us if the cell is playable or not
-    public Point myPair = new Point(-99, -99); //add pair for valid space position
+    private Point myPair = new Point (-99,-99); //add pair for valid space position
+    //private boolean hoverHighlight;
+    private boolean availableSpace; // This indicates if you can move a piece here
     public Ellipse visualPiece = new Ellipse(this.getWidth() / 3, this.getHeight() / 3,
             this.getWidth(), this.getHeight());
 
@@ -23,6 +25,7 @@ public class Cell extends Pane {
 
     private Point getCoords(int i, int j) {
         Point oldCoord = new Point(i, j);
+
         return Move.getCoordTable().get(oldCoord);
     }
 
@@ -68,8 +71,9 @@ public class Cell extends Pane {
 
     // Cell constructor checks if it is a validSpace and initializes drawings for the cell
     // Then, it initializes the coordinates
-    public Cell(int i, int j) {
-        //setStyle("-fx-border-color : black");
+
+    public Cell(int i, int j){
+        this.availableSpace = false;
         validSpace = checkValidSpace(i, j);
         initializeDrawings(i, j);
         this.setPrefSize(150, 150); // sets default cell size (refactor sometime!)
@@ -91,10 +95,10 @@ public class Cell extends Pane {
         if (validSpace == true) {
             //Assign myPair via coordTable
             this.myPair = new Point(getCoords(i, j));
+            this.setOnMouseEntered(e -> hoverHighlightCell());
+            this.setOnMouseExited(e -> undoHoverHighlight());
             pairToCell.put(myPair, this);
             this.setOnMouseClicked(this::handleClick);
-            this.setOnMouseEntered(e -> highlightCell());
-            this.setOnMouseExited(e -> undoHighlight());
         }
     }
 
@@ -530,12 +534,37 @@ public class Cell extends Pane {
                 break;
         }
     }
+    
+    private void hoverHighlightCell() {
+    	this.setStyle("-fx-border-color:" + Style.midBlueHex
+    		    + "; -fx-background-color:" + Style.lightBlueHex
+    		    + "; -fx-border-width: 15; "
+    		    + "-fx-border-radius: 50%;");
+    }
+    
+    private void undoHoverHighlight() {
+        if (this.availableSpace == false){
+            this.setStyle("-fx-background-color: " + Style.lightBlueHex
+                    + "; -fx-text-fill: white;");
+        }
+        else{
+            highlightAvailableSpace();
+        }
+    }
 
-    private void highlightCell() {
-        this.setStyle("-fx-border-color: #7895a2; "
-                + "-fx-background-color: #afc1cc; "
-                + "-fx-border-width: 15; "
+    private void highlightAvailableSpace(){
+        this.setStyle("-fx-border-color:" + Style.availableMoveHex
+                + "; -fx-background-color:" + Style.lightBlueHex
+                + "; -fx-border-width: 15; "
                 + "-fx-border-radius: 50%;");
+    }
+
+    public void showAvailableSpaces(Point currentLocation){
+        // use moveTable to return the points that are available moves
+        // check if the returned points are open?
+        // use getCellFromPair hashmap to get the cells to highlight
+        // each cell returned must call highlightAvailableSpace
+        // change availableSpace = true for each cell returned
     }
 
     private void undoHighlight() {

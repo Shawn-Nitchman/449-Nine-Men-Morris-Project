@@ -1,19 +1,28 @@
 package NineMensMorris;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.*;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /// All Structure extended from Application are static. That was why we could not use the non-static methods.
 public class Gui extends Application{
+    private Stage window;
+    private Scene gamePage;
+    private Scene menuPage;
+    private Scene instructionsPage;
 	private static Game.GamePlay myGame = new Game.GamePlay();
     //private static String currentPlayer = "R";
     private Cell[][] cell = new Cell[7][7];
@@ -25,11 +34,56 @@ public class Gui extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        window = primaryStage;
+        window.setTitle("9 Men Morris");
 
-        // In progress on making it change color each time.
-        primaryStage.setTitle("9 Men Morris");
+        initializeMenu();
+        initializeInstructionsPage();
+        initializeGamePage();
+        goToMenu();
+    }
 
-        //Layout initialization
+    // sets the window scene to menuPage
+    private void goToMenu(){
+        window.setScene(menuPage);
+        window.show();
+    }
+
+    private void initializeMenu(){
+        VBox menuLayout = new VBox(20);
+        menuLayout.setSpacing(10);
+        menuLayout.setPadding(new Insets(0, 20, 10, 20));
+        menuLayout.setAlignment(Pos.CENTER);
+
+        Label menuDesc = new Label("Welcome to 9 Men Morris");
+        Button startGame = new Button("Start Game");
+        startGame.setOnMouseClicked(e -> window.setScene(gamePage));
+        Button instructions = new Button("How to play");
+        instructions.setOnMouseClicked(e -> window.setScene(instructionsPage));
+        menuLayout.getChildren().addAll(menuDesc, startGame, instructions);
+        menuPage = new Scene(menuLayout, 500, 500);
+    }
+
+    private void initializeInstructionsPage(){
+        String instructions = "How to play 9 Men Morris:\n" +
+                "Place pieces\n" +
+                "Make mills\n" +
+                "Remove the other player's pieces\n" +
+                "Move your pieces\n";
+        Label instructionsDesc = new Label(instructions);
+        VBox pageLayout = new VBox(20);
+        pageLayout.setAlignment(Pos.CENTER);
+        pageLayout.setSpacing(10);
+        Button menuReturn = new Button("Return to Menu");
+        menuReturn.setOnMouseClicked(e -> window.setScene(menuPage));
+        Button startGame = new Button("Start Game");
+        startGame.setOnMouseClicked(e -> window.setScene(gamePage));
+        pageLayout.getChildren().addAll(instructionsDesc, menuReturn, startGame);
+        instructionsPage = new Scene(pageLayout, 500, 500);
+    }
+
+    private void initializeGamePage(){
+        //Layout initialization for game
         BorderPane border = new BorderPane();
         player1 = addVBox("Player1", 9);
         player2 = addVBox("Player2", 9);
@@ -38,10 +92,7 @@ public class Gui extends Application{
         border.setLeft(player1);
         border.setCenter(gridpane);
         border.setRight(player2);
-
-        Scene scene = new Scene(border, 850, 650);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        gamePage = new Scene(border, 850, 650);
     }
 
     // Add to draw/visual class
