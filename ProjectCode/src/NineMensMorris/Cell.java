@@ -504,6 +504,7 @@ public class Cell extends Pane {
         // check if the returned points are open?
         // use getCellFromPair hashmap to get the cells to highlight
         // each cell returned must call highlightAvailableSpace
+        // change availableSpace = true for each cell returned
     }
 
     public void placePiece(String color){
