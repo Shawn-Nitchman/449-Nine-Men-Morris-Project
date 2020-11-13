@@ -462,6 +462,10 @@ public class Cell extends Pane {
                 "toString : " + e.toString() + "\n");
         */
         switch (theGame.gameState) {
+            case Finished:
+                break;
+            case Draw:
+                break;
             case Mill:
                 //Try to Remove piece at this location
                 if (qTable.get(myPair) != null && qTable.get(myPair) != currentPlayer) {
@@ -479,6 +483,11 @@ public class Cell extends Pane {
                 //Try to Move lastPiece to new Location
                 if (Move.changeLocation(currentPlayer, theGame.getLastCell().myPair, this.myPair)) {
                     //Insert REMOVE_MOVE_HIGHLIGHTS function call
+                    for (Point pair : pairToCell.keySet()) {
+                        Cell tempCell = pairToCell.get(pair);
+                        tempCell.undoHighlight();
+                        tempCell.availableSpace = false;
+                    }
                     removeVisualPiece(theGame.getLastCell());
                     colorVisualPiece(currentPlayer);
                     theGame.countMills(currentPlayer, myPair);
@@ -488,6 +497,12 @@ public class Cell extends Pane {
                     }
                 } else if (myPair == theGame.getLastCell().myPair){
                     theGame.gameState = Game.GameState.Moving;
+                    for (Point highlitCell : Move.getMoveTable().get(theGame.lastCell.myPair)) {
+                        Cell tempCell = pairToCell.get(highlitCell);
+                        tempCell.undoHighlight();
+                        tempCell.availableSpace = false;
+                    }
+                    //Call unhighlight Function
                 }
                 break;
             case Placing:
@@ -506,16 +521,21 @@ public class Cell extends Pane {
                 if (qTable.get(myPair) != null && qTable.get(myPair).equals(currentPlayer)) {
 
                     boolean canMove = false;
-                    ArrayList<Point> tempList = Move.getMoveTable().get(myPair);
                     for (Point checkPair : Move.getMoveTable().get(myPair)) {
                         if (Move.isOpen(checkPair)) {
-                            //Insert HIGHLIGHTS function call
+                            showAvailableSpaces(checkPair);
                             canMove = true;
-                            break;
+                        }
+                    }
+                    if (theGame.getCurrentPlayer().isFlying()) {
+                        canMove = true;
+                        for (Point pair : Move.getCoordTable().values()) {
+                            if (Move.isOpen(pair)) {
+                                showAvailableSpaces(pair);
+                            }
                         }
                     }
                     if (canMove) {
-                        //Insert ADD_MOVE_HIGHLIGHTS function call
                         theGame.setLastCell(this);
                         theGame.switchMidMove();
                         theGame.updateGameState();
@@ -560,8 +580,11 @@ public class Cell extends Pane {
     }
 
     public void showAvailableSpaces(Point currentLocation){
-        // use moveTable to return the points that are available moves
-        // check if the returned points are open?
+        Cell availableCell = pairToCell.get(currentLocation);
+        if (availableCell != null) {
+            availableCell.highlightAvailableSpace();
+            availableCell.availableSpace = true;
+        }
         // use getCellFromPair hashmap to get the cells to highlight
         // each cell returned must call highlightAvailableSpace
         // change availableSpace = true for each cell returned

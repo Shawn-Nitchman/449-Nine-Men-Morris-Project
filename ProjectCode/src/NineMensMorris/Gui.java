@@ -35,7 +35,7 @@ public class Gui extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception{
         window = primaryStage;
-        window.setTitle("9 Men Morris");
+        window.setTitle("9 Men's Morris");
 
         initializeMenu();
         initializeInstructionsPage();
