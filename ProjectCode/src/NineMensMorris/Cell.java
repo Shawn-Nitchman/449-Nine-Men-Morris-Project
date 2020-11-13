@@ -1,6 +1,5 @@
 package NineMensMorris;
 
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -8,6 +7,7 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 //import javafx.scene.paint.Color;
@@ -15,9 +15,11 @@ import java.util.HashMap;
 // Cells make up the 7x7 grid on the board of playable and non-playable places
 public class Cell extends Pane {
     private boolean validSpace; // This tells us if the cell is playable or not
-    private Point myPair = new Point(-99, -99); //add pair for valid space position
+    public Point myPair = new Point(-99, -99); //add pair for valid space position
     public Ellipse visualPiece = new Ellipse(this.getWidth() / 3, this.getHeight() / 3,
             this.getWidth(), this.getHeight());
+
+    public static HashMap<Point, Cell> pairToCell = new HashMap<>();
 
     private Point getCoords(int i, int j) {
         Point oldCoord = new Point(i, j);
@@ -89,6 +91,7 @@ public class Cell extends Pane {
         if (validSpace == true) {
             //Assign myPair via coordTable
             this.myPair = new Point(getCoords(i, j));
+            pairToCell.put(myPair, this);
             this.setOnMouseClicked(this::handleClick);
             this.setOnMouseEntered(e -> highlightCell());
             this.setOnMouseExited(e -> undoHighlight());
@@ -445,7 +448,7 @@ public class Cell extends Pane {
     // This is called when a validSpace is clicked to handle how a piece is placed
     private void handleClick(MouseEvent e) {
         Game.GamePlay theGame = Gui.getMyGame();
-        Player thePlayer = theGame.getCurrentPlayer();
+        Player currentPlayer = theGame.getCurrentPlayer();
         HashMap<Point, Player> qTable = theGame.getQuickTable();
         /*
         //FIXME: Event Experimentation
@@ -457,12 +460,12 @@ public class Cell extends Pane {
         switch (theGame.gameState) {
             case Mill:
                 //Try to Remove piece at this location
-                if (qTable.get(myPair) != null && qTable.get(myPair) != thePlayer) {
-                    removeVisualPiece();
+                if (qTable.get(myPair) != null && qTable.get(myPair) != currentPlayer) {
+                    removeVisualPiece(this);
                     Move.removePiece(myPair);
 
-                    if (Gui.getMyGame().newMills() == 0) {
-                        Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+                    if (Gui.getMyGame().currentMills() == 0) {
+                        //Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
                         theGame.switchTurn();
                         break;
                     }
@@ -470,40 +473,56 @@ public class Cell extends Pane {
                 break;
             case MidMove:
                 //Try to Move lastPiece to new Location
-                if (Move.changeLocation(thePlayer, theGame.getLastPoint(), this.myPair)) {
-                    colorVisualPiece((Gui.getCurrentPlayer()));
-                    theGame.inMill(thePlayer, myPair);
-                    if (Gui.getMyGame().newMills() == 0) {
-                        Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+                if (Move.changeLocation(currentPlayer, theGame.getLastCell().myPair, this.myPair)) {
+                    //Insert REMOVE_MOVE_HIGHLIGHTS function call
+                    removeVisualPiece(theGame.getLastCell());
+                    colorVisualPiece(currentPlayer);
+                    theGame.countMills(currentPlayer, myPair);
+                    if (Gui.getMyGame().currentMills() == 0) {
+                        //Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
                         theGame.switchTurn();
                     }
+                } else if (myPair == theGame.getLastCell().myPair){
+                    theGame.gameState = Game.GameState.Moving;
                 }
                 break;
             case Placing:
                 //Place piece on board
-                if (Move.changeLocation(thePlayer, Game.IN_BAG, this.myPair)) {
-                    colorVisualPiece(Gui.getCurrentPlayer());
-                    theGame.inMill(thePlayer, myPair);
-                    if (Gui.getMyGame().newMills() == 0) {
-                        Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
+                if (Move.changeLocation(currentPlayer, Game.IN_BAG, this.myPair)) {
+                    colorVisualPiece(currentPlayer);
+                    theGame.countMills(currentPlayer, myPair);
+                    if (Gui.getMyGame().currentMills() == 0) {
+                        //Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
                         theGame.switchTurn();
                     }
                 }
                 break;
             case Moving:
                 //Capture first click, change myGame.midMove to true
-                if (qTable.get(myPair) != null && qTable.get(myPair).equals(thePlayer)) {
-                    theGame.setLastPoint(myPair);
-                    theGame.switchMidMove();
-                    theGame.updateGameState();
-                    removeVisualPiece();
+                if (qTable.get(myPair) != null && qTable.get(myPair).equals(currentPlayer)) {
+
+                    boolean canMove = false;
+                    ArrayList<Point> tempList = Move.getMoveTable().get(myPair);
+                    for (Point checkPair : Move.getMoveTable().get(myPair)) {
+                        if (Move.isOpen(checkPair)) {
+                            //Insert HIGHLIGHTS function call
+                            canMove = true;
+                            break;
+                        }
+                    }
+                    if (canMove) {
+                        //Insert ADD_MOVE_HIGHLIGHTS function call
+                        theGame.setLastCell(this);
+                        theGame.switchMidMove();
+                        theGame.updateGameState();
+                    }
                 }
                 break;
         }
         switch (theGame.gameState) {
             case Finished:
                 //Display Winner's Dialog Box
-                System.out.println(thePlayer.getName() + ": WON!!");
+                System.out.println(currentPlayer.getName() + ": WON!!");
                 break;
             case Draw:
                 //Display Draw Dialog Box
@@ -523,21 +542,21 @@ public class Cell extends Pane {
         this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
     }
 
-    public void colorVisualPiece(String color) {
-        if (color == "R") {
+    public void colorVisualPiece(Player player) {
+        if (player.equals(Gui.getMyGame().pl1)) {
             visualPiece.setFill(Style.darkRed);
             visualPiece.setVisible(true);
-            Gui.removeVBoxElement("R");
-        } else if (color == "B") {
+            Gui.removeVBoxElement(Gui.player1);
+        } else {
             visualPiece.setFill(Style.darkBlue);
             visualPiece.setVisible(true);
-            Gui.removeVBoxElement("B");
+            Gui.removeVBoxElement(Gui.player2);
         }
     }
 
-    private void removeVisualPiece() {
+    private void removeVisualPiece(Cell theCell) {
         Node theNode = null;
-        for (Node node : this.getChildren()) {
+        for (Node node : theCell.getChildren()) {
             if (node instanceof Ellipse) {
                 theNode = node;
                 break;

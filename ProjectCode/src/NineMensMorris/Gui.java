@@ -15,13 +15,13 @@ import javafx.scene.text.Text;
 /// All Structure extended from Application are static. That was why we could not use the non-static methods.
 public class Gui extends Application{
 	private static Game.GamePlay myGame = new Game.GamePlay();
-    private static String currentPlayer = "R";
+    //private static String currentPlayer = "R";
     private Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
-    public static String getCurrentPlayer() { return currentPlayer; }
+    //public static String getCurrentPlayer() { return currentPlayer; }
     public static Game.GamePlay getMyGame() { return myGame; }
 
-    public static void setCurrentPlayer(String p) { currentPlayer = p; }
+    //public static void setCurrentPlayer(String p) { currentPlayer = p; }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -72,31 +72,16 @@ public class Gui extends Application{
     }
 
     //Method to remove displayed pieces on each player's size one the piece is placed.
-    public static void removeVBoxElement(String id) {
+    public static void removeVBoxElement(VBox playerBox) {
 
-        if (id == "R") {
-            ///Some how index zero is the actualy player's name "Player1/Player2" Please solve this.
-            //player1.getChildren().remove(1);
             Node theNode = null;
-            for (Node node : player1.getChildren()) {
+            for (Node node : playerBox.getChildren()) {
                 if (node instanceof Ellipse) {
                     theNode = node;
                     break;
                 }
             }
-            if (theNode != null) {player1.getChildren().remove(theNode); }
-        }
-        if (id == "B") {
-            //player2.getChildren().remove(1);
-            Node theNode = null;
-            for (Node node : player2.getChildren()) {
-                if (node instanceof Ellipse) {
-                    theNode = node;
-                    break;
-                }
-            }
-            if (theNode != null) {player2.getChildren().remove(theNode); }
-        }
+            if (theNode != null) {playerBox.getChildren().remove(theNode); }
     }
 
     // Creates 7x7 grid and returns it

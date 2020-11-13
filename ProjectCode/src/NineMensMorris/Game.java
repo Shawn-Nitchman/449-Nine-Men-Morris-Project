@@ -19,7 +19,7 @@ public abstract class Game {
     protected int moveCount = 0;
     protected int currentMills = 0;
     protected boolean midMove = false;
-    protected Point lastPair = new Point(-99,-99);
+    protected Cell lastCell = null;
 
     public static class GamePlay extends Game {
 
@@ -33,13 +33,13 @@ public abstract class Game {
         public Vector<Player> getPlayers() { return super.players; }
         public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
         public Player getCurrentPlayer() { return super.currentPlayer; }
-        public int newMills() { return currentMills; }
+        public int currentMills() { return currentMills; }
         public boolean unresolvedMills() {return currentMills > 0;}
         public boolean isMidMove() {return midMove; }
-        public Point getLastPoint() {return lastPair; }
+        public Cell getLastCell() {return lastCell; }
 
         //Setters
-        public void setLastPoint(Point pair) {lastPair = pair; }
+        public void setLastCell(Cell cell) {lastCell = cell; }
         public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; }
         public void incrementMoveCount() {moveCount++; }
         public void decrementMill() { currentMills--; }
@@ -78,7 +78,7 @@ public abstract class Game {
                 if (noMove(player) || lostByPieceCount(player)) {gameState = GameState.Finished; }
             }
         }
-        public boolean inMill(Player myPlayer, Point pair) {
+        public boolean countMills(Player myPlayer, Point pair) {
             currentMills = 0;
             int myX = pair.x;
             int myY = pair.y;
