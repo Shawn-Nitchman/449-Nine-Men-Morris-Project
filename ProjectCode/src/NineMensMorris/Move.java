@@ -101,46 +101,48 @@ public abstract class Move {
     //Uses the QuickTable
     public static boolean isOpen(Point pair) {
 
-        for (Point point : myGame.getQuickTable().keySet()) {
-            if (pair.equals(point)) return false;
-        }
-        return true; //none found, so return true the spot isOpen
+        return !myGame.getQuickTable().containsKey(pair);//none found, so return true the spot isOpen
     }
 
+    //Pass in a piece and a location to see if the piece is allowed to try to move from it's current location
     protected static boolean isLegal(Piece piece, Point newPair) {
-        //return oldPair.equals(Game.IN_BAG) || isFlying(player) || checkYCoord(oldPair, newPair); FIXME: Delete for release
         boolean fromInBag = piece.getPair().equals(Game.IN_BAG);
         boolean isFlying = piece.getMyPlayer().isFlying();
 
         return  fromInBag || isFlying || moveTable.get(piece.getPair()).contains(newPair);
     }
 
-    // Move function.
-    //
+    //Moving function
     //WARNING: Modifies piece vector
     public static boolean changeLocation(Player player, Point oldPair, Point newPair) {
         Piece thePiece = findPiece(player, oldPair);
 
         if (thePiece != null && isOpen(newPair) && isLegal(thePiece, newPair)) {
                 thePiece.setPair(newPair);
+                myGame.incrementMoveCount();
+                if (myGame.isMidMove()) {myGame.switchMidMove(); }
                 myGame.DrawQuickTable();
+                myGame.updateGameState();
                 //System.out.println(player.getName() + " just placed at " + thePiece.getPair());
                 return true;
             }
         return false;
     }
 
-    //
+    //WARNING: Modifies piece vector
     public static boolean removePiece(Point pair) {
         Piece thePiece = findPiece(null, pair);
 
         if (thePiece != null && thePiece.getMyPlayer().getPieces().remove(thePiece)) {
+            myGame.decrementMill();
             myGame.DrawQuickTable();
+            myGame.updateGameState();
             return true;
         }
         return false;
     }
 
+    //Pass in a player/null and a pair, returns a piece if one is located at the location of pair, or null if not
     //Helper Function for removePiece and Move
     private static Piece findPiece(Player player, Point pair) {
         if (player != null) {
@@ -160,61 +162,4 @@ public abstract class Move {
         }
         return null;
     }
-
-/* Keep this for reference FIXME: Delete before release
-    private static boolean checkYCoord(Point oldPair, Point newPair) {
-
-
-        int myY = oldPair.y;
-        int myX = oldPair.x;
-        int newY = newPair.y;
-        int newX = newPair.x;
-
-        //If the Y coords are equal and even (i.e. corner spot)
-        //Or if we are trying to move to/from the same spot
-        if (oldPair == newPair || myY == newY && myY % 2 == 0) {
-            return false;
-        }
-
-        //If the Y coords are equal and odd (i.e. midpoint spot)
-        if (myY == newY && myY % 2 == 1) {
-            return checkXCoord(myX, newX);
-        }
-
-        //If the Y coords are different AND the X coords are the same
-        if (myY != newY && myX == newX) switch (myY) {
-            case 0: //Special Case
-                return (newY == 1 || newY == 7);
-
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6: //All regular cases
-                return (newY == myY - 1) || (newY == myY + 1);
-
-            case 7: //Special Case
-                return (newY == 6 || newY == 0);
-
-            default:
-                return false; //Any number outside of 0..7 is illegal
-        }
-        return false; //Any other combo of X & Y is illegal (i.e. different Y and different X)
-    }
-
-    private static boolean checkXCoord(int myX, int newX) {
-
-        switch (myX) {
-            case 0:
-            case 2:
-                return (newX == 1);
-            case 1:
-                return (newX == 0 || newX == 2);
-            default:
-                return false;
-        }
-    }
-
- */
 }
