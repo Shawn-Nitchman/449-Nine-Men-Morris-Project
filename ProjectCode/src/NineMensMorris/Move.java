@@ -8,6 +8,7 @@ public abstract class Move {
     private static HashMap<Point, Point> coordTable;
     private static HashMap<Point, ArrayList<Point>> moveTable;
     private static Game.GamePlay myGame;
+    private static int moveCount = 0;
 
     public static void linkUp(Game.GamePlay myGame) {
         Move.myGame = myGame;
@@ -18,7 +19,11 @@ public abstract class Move {
     //Getters
     public static HashMap<Point, Point> getCoordTable() { return coordTable; }
     public static HashMap<Point, ArrayList<Point>> getMoveTable(){ return moveTable; }
+    public static int getMoveCount() { return moveCount; }
     protected static Game.GamePlay getMyGame() { return myGame; }
+
+    //Setter
+    public static void incrementMoveCount() {moveCount++; }
 
     //Initializers
     //This Table has the GUI grid coords as the keys and playing coords as values
@@ -119,10 +124,10 @@ public abstract class Move {
 
         if (thePiece != null && isOpen(newPair) && isLegal(thePiece, newPair)) {
                 thePiece.setPair(newPair);
-                myGame.incrementMoveCount();
+                incrementMoveCount();
                 if (myGame.isMidMove()) {myGame.setMidMove(false); }
                 myGame.DrawQuickTable();
-                myGame.isInMill(player, newPair, true);
+                myGame.isInMill(newPair, true);
                 myGame.updateGameState();
                 //System.out.println(player.getName() + " just placed at " + thePiece.getPair());
                 return true;

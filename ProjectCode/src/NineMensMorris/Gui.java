@@ -23,9 +23,9 @@ public class Gui extends Application{
     private Scene gamePage;
     private Scene menuPage;
     private Scene instructionsPage;
-	private static Game.GamePlay myGame = new Game.GamePlay();
+	private static final Game.GamePlay myGame = new Game.GamePlay();
     //private static String currentPlayer = "R";
-    private Cell[][] cell = new Cell[7][7];
+    private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
     //public static String getCurrentPlayer() { return currentPlayer; }
     public static Game.GamePlay getMyGame() { return myGame; }
@@ -107,17 +107,18 @@ public class Gui extends Application{
         vbox.getChildren().add(title);
 
         for (int i = 1; i <= num; i++){
+            Ellipse ellipse = new Ellipse(20,20,20,20);
+            ellipse.setStroke(Color.BLACK);
+
            if(name.equals("Player1")){
-               Ellipse ellipse = new Ellipse(20,20,20,20);
-               ellipse.setStroke(Color.BLACK);
                ellipse.setFill(Style.darkRed);
-               vbox.getChildren().add(ellipse);
-           }else{
-               Ellipse ellipse = new Ellipse(20,20,20,20);
+           }
+           else {
                ellipse.setStroke(Color.BLACK);
                ellipse.setFill(Style.darkBlue);
-               vbox.getChildren().add(ellipse);
            }
+
+            vbox.getChildren().add(ellipse);
         }
         return vbox;
     }

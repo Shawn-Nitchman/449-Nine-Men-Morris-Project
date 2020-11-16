@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 // Cells make up the 7x7 grid on the board of playable and non-playable places
 public class Cell extends Pane {
-    private boolean validSpace; // This tells us if the cell is playable or not
+    private final boolean validSpace; // This tells us if the cell is playable or not
     private Point myPair = new Point (-99,-99); //add pair for valid space position
     //private boolean hoverHighlight;
     private boolean availableSpace; // This indicates if you can move a piece here
@@ -92,12 +92,13 @@ public class Cell extends Pane {
     //This initializes the coordinates for our coordinate system
     //given the position on the 7x7 grid and whether it's a playable space
     private void initializeCoords(int i, int j, boolean validSpace) {
-        if (validSpace == true) {
+        if (validSpace) {
             //Assign myPair via coordTable
             this.myPair = new Point(getCoords(i, j));
+            pairToCell.put(myPair, this);
+
             this.setOnMouseEntered(e -> hoverHighlightCell());
             this.setOnMouseExited(e -> undoHoverHighlight());
-            pairToCell.put(myPair, this);
             this.setOnMouseClicked(this::handleClick);
         }
     }
@@ -478,9 +479,7 @@ public class Cell extends Pane {
                         Move.removePiece(myPair);
 
                         if (Gui.getMyGame().getCurrentMills() == 0) {
-                            //Gui.setCurrentPlayer((Gui.getCurrentPlayer() == "R") ? "B" : "R");
                             theGame.switchTurn();
-                            break;
                         }
                     }
                 }
@@ -496,7 +495,6 @@ public class Cell extends Pane {
                     removeVisualPiece(theGame.getLastCell());
                     colorVisualPiece(currentPlayer);
                     if (Gui.getMyGame().getCurrentMills() == 0) {
-                        theGame.setFreePiecesToNull();
                         theGame.switchTurn();
                     }
                 } else if (myPair == theGame.getLastCell().myPair){
@@ -604,13 +602,12 @@ public class Cell extends Pane {
     public void colorVisualPiece(Player player) {
         if (player.equals(Gui.getMyGame().pl1)) {
             visualPiece.setFill(Style.darkRed);
-            visualPiece.setVisible(true);
             Gui.removeVBoxElement(Gui.player1);
         } else {
             visualPiece.setFill(Style.darkBlue);
-            visualPiece.setVisible(true);
             Gui.removeVBoxElement(Gui.player2);
         }
+        visualPiece.setVisible(true);
     }
 
     private void removeVisualPiece(Cell theCell) {

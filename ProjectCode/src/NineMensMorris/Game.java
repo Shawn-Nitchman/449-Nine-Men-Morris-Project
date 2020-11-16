@@ -1,6 +1,5 @@
 package NineMensMorris;
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -13,11 +12,10 @@ public abstract class Game {
     //Variables
     protected Vector<Player> players; // Container of 2 players in the Game.
     protected HashMap<Point, Player> quickTable = new HashMap<Point, Player>(); //HashTable for quick reference
-    public enum GameState {Draw, MidMove, Mill, Moving, Placing, Finished}
+    public enum GameState {Draw, Finished, MidMove, Mill, Moving, Placing}
     public GameState gameState = GameState.Placing;
     public Player pl1, pl2;
     protected Player currentPlayer;
-    protected int moveCount = 0;
     protected int currentMills = 0;
     protected boolean midMove = false;
     protected Cell lastCell = null;
@@ -34,21 +32,23 @@ public abstract class Game {
         //Getters
         public Vector<Player> getPlayers() { return super.players; }
         public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
-        public Player getCurrentPlayer() { return super.currentPlayer; }
         public int getCurrentMills() { return currentMills; }
         public boolean unresolvedMills() {return currentMills > 0;}
-        public boolean isMidMove() { return midMove; }
+
+        public Player getCurrentPlayer() { return super.currentPlayer; }
         public Cell getLastCell() { return lastCell; }
         public ArrayList<Point> getFreePieces() { return freePieces; }
+        public boolean isMidMove() { return midMove; }
 
         //Setters
-        public void setLastCell(Cell cell) {lastCell = cell; }
-        public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; }
-        public void setCurrentPlayer(Player player) {currentPlayer = player; }
-        public void incrementMoveCount() {moveCount++; }
+        public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; setFreePiecesToNull();}
         public void decrementMill() { currentMills--; }
-        public void setMidMove(boolean flag) {midMove = flag; }
+
+        public void setCurrentPlayer(Player player) {currentPlayer = player; }
+        public void setLastCell(Cell cell) {lastCell = cell; }
         public void setFreePiecesToNull() { freePieces = null; }
+        public void setMidMove(boolean flag) {midMove = flag; }
+
 
         //Initializers
         protected void InitPlayers() {
@@ -62,6 +62,7 @@ public abstract class Game {
         }
 
         //Main Functions
+        //The quick table maps the piece vectors to their player for quicker (and safe) access
         protected void DrawQuickTable() {
             quickTable = new HashMap<Point, Player>();
             for (Player player : players) {
@@ -73,6 +74,7 @@ public abstract class Game {
             }
         }
 
+        //This function updates the GameState enumeration to the correct state (WARNING: Pass-thru behavior)
         public void updateGameState() {
             gameState = GameState.Moving;
             if (isPlacing()) {gameState = GameState.Placing;}
@@ -81,17 +83,19 @@ public abstract class Game {
                 gameState = GameState.Mill;
                 checkForUnmilledPieces(this.getCurrentPlayer() == pl1 ? pl2 : pl1);
             }
-            if (moveCount >= 150) {gameState = GameState.Draw; }
-            for (Player player : players) {
-                if (noMove(player) || lostByPieceCount(player)) {gameState = GameState.Finished; }
-            }
+            if (Move.getMoveCount() >= 150) {gameState = GameState.Draw; }
+
+            Player opponent = getCurrentPlayer().equals(pl1) ? pl2 : pl1;
+            if (noMove(opponent) || lostByPieceCount(opponent)) {gameState = GameState.Finished; }
         }
 
+        //Instantiates the freePieces Array and populates it with a players 'free' (unmilled) pieces,
+        // or sets it to null if all pieces are in mills
         private void checkForUnmilledPieces(Player player) {
             freePieces = new ArrayList<Point>();
             for (Map.Entry<Point, Player> pair : getQuickTable().entrySet()) {
                 if (pair.getValue().equals(player)) {
-                    if (!isInMill(player, pair.getKey(), false)) {
+                    if (!isInMill(pair.getKey(), false)) {
                         freePieces.add(pair.getKey());
                     }
                 }
@@ -99,10 +103,10 @@ public abstract class Game {
             if (freePieces.size() == 0) { freePieces = null; }
         }
 
-
-
-        public boolean isInMill(Player myPlayer, Point pair, boolean toCount) {
+        //Checks a point if it is in a mill, will also modify currentMills if toCount == true
+        public boolean isInMill(Point pair, boolean toCount) {
             boolean isInAMill = false;
+            Player myPlayer = quickTable.get(pair);
             int myX = pair.x;
             int myY = pair.y;
 
@@ -161,7 +165,7 @@ public abstract class Game {
         }
 
         //Helper Function for inMill
-        public boolean checkMill(Player player, Point p1, Point p2) {
+        private boolean checkMill(Player player, Point p1, Point p2) {
             HashMap<Point, Player> myQuickTable = getQuickTable();
             return myQuickTable.containsKey(p1) &&
                     myQuickTable.get(p1).equals(player) &&
@@ -169,21 +173,23 @@ public abstract class Game {
                     myQuickTable.get(p2).equals(player);
         }
 
+        //Checks if the game is in the 'Placing' phase
         public boolean isPlacing() {
             //If the quickTable and the sum of the player's pieces vectors are not equal,
-            // there are still unplaced pieces
+            // there are still unplaced pieces (the only pieces in one and not the other are IN_BAG)
             return !(getQuickTable().keySet().size() == pl1.getPieces().size() + pl2.getPieces().size());
         }
 
+        //Checks if a player lost because the have only two pieces left
         public boolean lostByPieceCount(Player player) {
                 if (player.hasTwoPieces()) return true;
             return false;
         }
 
+        //Checks if a player lost because they have no available moves
         public boolean noMove(Player player) {
 
-            if (player.isFlying() || isPlacing()) return false;
-            if (getQuickTable().keySet().size() < 9) {return false; }
+            if (player.isFlying() || isPlacing() || getQuickTable().size() < 8) return false;
 
             for (Map.Entry<Point, Player> myPair : getQuickTable().entrySet()) {
                 if (myPair.getValue().equals(player)) {
