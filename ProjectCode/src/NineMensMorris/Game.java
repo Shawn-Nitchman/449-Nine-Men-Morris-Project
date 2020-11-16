@@ -1,5 +1,6 @@
 package NineMensMorris;
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -20,6 +21,7 @@ public abstract class Game {
     protected int currentMills = 0;
     protected boolean midMove = false;
     protected Cell lastCell = null;
+    protected ArrayList<Point> freePieces = null;
 
     public static class GamePlay extends Game {
 
@@ -33,17 +35,20 @@ public abstract class Game {
         public Vector<Player> getPlayers() { return super.players; }
         public HashMap<Point, Player> getQuickTable() {return super.quickTable; }
         public Player getCurrentPlayer() { return super.currentPlayer; }
-        public int currentMills() { return currentMills; }
+        public int getCurrentMills() { return currentMills; }
         public boolean unresolvedMills() {return currentMills > 0;}
-        public boolean isMidMove() {return midMove; }
-        public Cell getLastCell() {return lastCell; }
+        public boolean isMidMove() { return midMove; }
+        public Cell getLastCell() { return lastCell; }
+        public ArrayList<Point> getFreePieces() { return freePieces; }
 
         //Setters
         public void setLastCell(Cell cell) {lastCell = cell; }
         public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; }
+        public void setCurrentPlayer(Player player) {currentPlayer = player; }
         public void incrementMoveCount() {moveCount++; }
         public void decrementMill() { currentMills--; }
-        public void switchMidMove() {midMove = !midMove; }
+        public void setMidMove(boolean flag) {midMove = flag; }
+        public void setFreePiecesToNull() { freePieces = null; }
 
         //Initializers
         protected void InitPlayers() {
@@ -72,14 +77,32 @@ public abstract class Game {
             gameState = GameState.Moving;
             if (isPlacing()) {gameState = GameState.Placing;}
             if (midMove) {gameState = GameState.MidMove; }
-            if (unresolvedMills()) {gameState = GameState.Mill; }
+            if (unresolvedMills()) {
+                gameState = GameState.Mill;
+                checkForUnmilledPieces(this.getCurrentPlayer() == pl1 ? pl2 : pl1);
+            }
             if (moveCount >= 150) {gameState = GameState.Draw; }
             for (Player player : players) {
                 if (noMove(player) || lostByPieceCount(player)) {gameState = GameState.Finished; }
             }
         }
-        public boolean countMills(Player myPlayer, Point pair) {
-            currentMills = 0;
+
+        private void checkForUnmilledPieces(Player player) {
+            freePieces = new ArrayList<Point>();
+            for (Map.Entry<Point, Player> pair : getQuickTable().entrySet()) {
+                if (pair.getValue().equals(player)) {
+                    if (!isInMill(player, pair.getKey(), false)) {
+                        freePieces.add(pair.getKey());
+                    }
+                }
+            }
+            if (freePieces.size() == 0) { freePieces = null; }
+        }
+
+
+
+        public boolean isInMill(Player myPlayer, Point pair, boolean toCount) {
+            boolean isInAMill = false;
             int myX = pair.x;
             int myY = pair.y;
 
@@ -90,14 +113,16 @@ public abstract class Game {
                                 myPlayer,
                                 new Point(myX, (myY == 0) ? 7 : myY - 1),
                                 new Point(myX, (myY == 0) ? 6 : myY - 2))) {
-                            currentMills++;
+                            isInAMill = true;
+                            if (toCount) { currentMills++; }
                         }
                         //Check two above for Y, SPECIAL CASE for myY == 6
                         if (checkMill(
                                 myPlayer,
                                 new Point(myX, myY + 1),
                                 new Point(myX, (myY == 6) ? 0 : myY + 2))) {
-                            currentMills++;
+                            isInAMill = true;
+                            if (toCount) { currentMills++; }
                         }
                     break;
 
@@ -116,21 +141,23 @@ public abstract class Game {
                             myPlayer,
                             new Point(x1, myY),
                             new Point(x2, myY))) {
-                        currentMills++;
+                        isInAMill = true;
+                        if (toCount) { currentMills++; }
                     }
                     //Check one below and one above for Y, SPECIAL CASE for myY == 7
                     if (checkMill(
                             myPlayer,
                             new Point(myX, myY - 1),
                             new Point(myX, (myY == 7) ? 0 : myY + 1))) {
-                        currentMills++;
+                        isInAMill = true;
+                        if (toCount) { currentMills++; }
                     }
                     break;
             }
 
             System.out.println("Current Mills = " + currentMills);
             if (currentMills > 0) {gameState = GameState.Mill; }
-            return (currentMills > 0);
+            return isInAMill;
         }
 
         //Helper Function for inMill

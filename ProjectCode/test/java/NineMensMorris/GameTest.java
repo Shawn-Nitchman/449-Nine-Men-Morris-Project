@@ -67,7 +67,7 @@ class GameTest extends Game {
         Move.changeLocation(theGame.pl1, IN_BAG, new Point (0,2));
         Move.changeLocation(theGame.pl2, IN_BAG, new Point(2,3));
         //Test
-        assertTrue(theGame.countMills(theGame.pl1, new Point(0, 0)));
+        assertTrue(theGame.isInMill(theGame.pl1, new Point(0, 0), false));
     }
 
     @Test

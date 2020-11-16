@@ -120,8 +120,9 @@ public abstract class Move {
         if (thePiece != null && isOpen(newPair) && isLegal(thePiece, newPair)) {
                 thePiece.setPair(newPair);
                 myGame.incrementMoveCount();
-                if (myGame.isMidMove()) {myGame.switchMidMove(); }
+                if (myGame.isMidMove()) {myGame.setMidMove(false); }
                 myGame.DrawQuickTable();
+                myGame.isInMill(player, newPair, true);
                 myGame.updateGameState();
                 //System.out.println(player.getName() + " just placed at " + thePiece.getPair());
                 return true;
