@@ -456,6 +456,7 @@ public class Cell extends Pane {
         Player currentPlayer = theGame.getCurrentPlayer();
         HashMap<Point, Player> qTable = theGame.getQuickTable();
 
+
         /*
         //FIXME: Event Experimentation
         System.out.println("getEventType : " + e.getEventType().toString() + "\n" +
@@ -512,6 +513,7 @@ public class Cell extends Pane {
                     colorVisualPiece(currentPlayer);
                     if (Gui.getMyGame().getCurrentMills() == 0) {
                         theGame.switchTurn();
+                        Gui.changeStatus("test");
                     }
                 }
                 break;
@@ -546,6 +548,7 @@ public class Cell extends Pane {
             case Finished:
                 //Display Winner's Dialog Box
                 theGame.setCurrentPlayer(currentPlayer);
+
                 System.out.println(currentPlayer.getName() + ": WON!!");
                 break;
             case Draw:
@@ -603,6 +606,7 @@ public class Cell extends Pane {
         if (player.equals(Gui.getMyGame().pl1)) {
             visualPiece.setFill(Style.darkRed);
             Gui.removeVBoxElement(Gui.player1);
+
         } else {
             visualPiece.setFill(Style.darkBlue);
             Gui.removeVBoxElement(Gui.player2);
