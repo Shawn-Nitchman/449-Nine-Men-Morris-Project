@@ -77,9 +77,20 @@ public abstract class Game {
         //This function updates the GameState enumeration to the correct state (WARNING: Pass-thru behavior)
         public void updateGameState() {
             gameState = GameState.Moving;
-            if (isPlacing()) {gameState = GameState.Placing;}
-            if (midMove) {gameState = GameState.MidMove; }
+
+            if (isPlacing()) {
+                if(getCurrentPlayer() == pl1){
+                    Gui.changeStatus("Blue place a piece down");
+                }else {Gui.changeStatus("Red place a piece down"); }
+                gameState = GameState.Placing;
+            }
+            if (midMove) {
+                gameState = GameState.MidMove;
+
+            }
+
             if (unresolvedMills()) {
+                Gui.changeStatus(currentPlayer.getName() + " has a mill remove oppenents piece");
                 gameState = GameState.Mill;
                 checkForUnmilledPieces(this.getCurrentPlayer() == pl1 ? pl2 : pl1);
             }

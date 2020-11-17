@@ -27,12 +27,8 @@ public class Gui extends Application{
 	private static final Game.GamePlay myGame = new Game.GamePlay();
     private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
-<<<<<<< HEAD
-
     public static Text statusText;
     //public static String getCurrentPlayer() { return currentPlayer; }
-=======
->>>>>>> bd69c13ac9e852ea9a364f2502d5ddd914dc8e26
 
     public static Game.GamePlay getMyGame() { return myGame; }
 
@@ -92,7 +88,11 @@ public class Gui extends Application{
         BorderPane border = new BorderPane();
         player1 = addVBox("Player1", 9);
         player2 = addVBox("Player2", 9);
-        statusText = new Text("Blue place down piece");
+
+        statusText = new Text("Red place a piece down");
+        statusText.setFont(Font.font("Arial", 36));
+        BorderPane.setAlignment(statusText, Pos.TOP_CENTER);
+
         GridPane gridpane = addGridPane();
 
         border.setTop(statusText);
@@ -130,6 +130,7 @@ public class Gui extends Application{
         }
         return vbox;
     }
+
 
     public static void changeStatus(String status){
         statusText.setText(status);

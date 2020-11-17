@@ -519,6 +519,9 @@ public class Cell extends Pane {
                         //If no mills were just made, it is ok to switch turn
                         if (Gui.getMyGame().getCurrentMills() == 0) {
                             theGame.switchTurn();
+                            if(currentPlayer.equals(theGame.pl1)){
+                                Gui.changeStatus("Blue move a piece");
+                            }else {Gui.changeStatus("Red move a piece"); }
                         }
                     }
                 }
@@ -540,6 +543,9 @@ public class Cell extends Pane {
 
                     //If no mills were just made, it is ok to switch turn
                     if (Gui.getMyGame().getCurrentMills() == 0) {
+                        if(currentPlayer.equals(theGame.pl1)){
+                            Gui.changeStatus("Blue move a piece");
+                        }else {Gui.changeStatus("Red move a piece"); }
                         theGame.switchTurn();
                     }
 
@@ -567,11 +573,14 @@ public class Cell extends Pane {
                     //If no mills were just made, it is ok to switch turn
                     if (Gui.getMyGame().getCurrentMills() == 0) {
                         theGame.switchTurn();
-                        Gui.changeStatus("test");
                     }
                 }
                 break;
             case Moving:
+                if(currentPlayer.equals(theGame.pl1)){
+                    Gui.changeStatus("Red move a piece");
+                }else {Gui.changeStatus("Blue move a piece"); }
+
                 //Capture first click, change myGame.midMove to true
                 //If a cell that was clicked has a piece on it of the current player...
                 if (qTable.get(myPair) != null && qTable.get(myPair).equals(currentPlayer)) {
@@ -612,12 +621,12 @@ public class Cell extends Pane {
                 //Display Winner's Dialog Box
                 theGame.setCurrentPlayer(currentPlayer);
 
-                System.out.println(currentPlayer.getName() + ": WON!!");
+                Gui.changeStatus(currentPlayer.getName() + ": WON!!");
                 break;
             case Draw:
                 //Display Draw Dialog Box
                 theGame.setCurrentPlayer(currentPlayer);
-                System.out.println("DRAW");
+                Gui.changeStatus("DRAW");
                 break;
         }
     }
