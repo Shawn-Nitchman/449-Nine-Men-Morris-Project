@@ -28,6 +28,7 @@ public class Gui extends Application{
     private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
 <<<<<<< HEAD
+
     public static Text statusText;
     //public static String getCurrentPlayer() { return currentPlayer; }
 =======
