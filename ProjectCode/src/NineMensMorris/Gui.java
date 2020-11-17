@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -27,9 +26,9 @@ public class Gui extends Application{
 	private static final Game.GamePlay myGame = new Game.GamePlay();
     private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
-    public static Text statusText;
-    //public static String getCurrentPlayer() { return currentPlayer; }
+    public static Text statusText = new Text("");
 
+    //Getter
     public static Game.GamePlay getMyGame() { return myGame; }
 
 
@@ -88,8 +87,6 @@ public class Gui extends Application{
         BorderPane border = new BorderPane();
         player1 = addVBox("Player1", 9);
         player2 = addVBox("Player2", 9);
-
-        statusText = new Text("Red place a piece down");
         statusText.setFont(Font.font("Arial", 36));
         BorderPane.setAlignment(statusText, Pos.TOP_CENTER);
 

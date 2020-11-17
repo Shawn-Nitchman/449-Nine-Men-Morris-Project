@@ -9,6 +9,7 @@ import javafx.scene.shape.Line;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 //import javafx.scene.paint.Color;
 
@@ -502,8 +503,7 @@ public class Cell extends Pane {
         */
 
         switch (theGame.gameState) {
-            case Mill:
-                //Try to Remove piece at this location
+            case Mill: //Try to Remove piece at this location
                 //If there is a piece on this cell AND it is of the other player
                 if (qTable.get(myPair) != null && qTable.get(myPair) != currentPlayer) {
 
@@ -512,22 +512,20 @@ public class Cell extends Pane {
 
                     //If freePieces equals null, all opponents pieces are in mills, any piece can be taken
                     //If the piece clicked is in the freePieces Array, is it not in a mill, and can be taken
-                    if (freePieces == null || freePieces.contains(myPair)) {
+                    if (freePieces == null) {
                         removeVisualPiece(this);
                         Move.removePiece(myPair);
-
-                        //If no mills were just made, it is ok to switch turn
-                        if (Gui.getMyGame().getCurrentMills() == 0) {
-                            theGame.switchTurn();
-                            if(currentPlayer.equals(theGame.pl1)){
-                                Gui.changeStatus("Blue move a piece");
-                            }else {Gui.changeStatus("Red move a piece"); }
-                        }
+                       Cell.undoHighlights();
                     }
+                    else if (freePieces.contains(myPair)) {
+                        removeVisualPiece(this);
+                        Move.removePiece(myPair);
+                        Cell.undoHighlights();
+                    }
+
                 }
                 break;
-            case MidMove:
-                //Try to Move lastPiece to new Location
+            case MidMove: //Try to Move lastPiece to new Location
                 if (Move.changeLocation(currentPlayer, theGame.getLastCell().myPair, this.myPair)) {
 
                     //Tell GUI to 'move' visual piece
@@ -535,53 +533,26 @@ public class Cell extends Pane {
                     colorVisualPiece(currentPlayer);
 
                     //Undo all highlights, as we have completed moving the piece
-                    for (Point pair : pairToCell.keySet()) {
-                        Cell tempCell = pairToCell.get(pair);
-                        tempCell.undoHighlight();
-                        tempCell.availableSpace = false;
-                    }
+                    Cell.undoHighlights();
 
-                    //If no mills were just made, it is ok to switch turn
-                    if (Gui.getMyGame().getCurrentMills() == 0) {
-                        if(currentPlayer.equals(theGame.pl1)){
-                            Gui.changeStatus("Blue move a piece");
-                        }else {Gui.changeStatus("Red move a piece"); }
-                        theGame.switchTurn();
-                    }
-
-                    //If you click on the same piece that you selected to move, you will unselect that piece
+                //If you click on the same piece that you selected to move, you will unselect that piece
                 } else if (myPair == theGame.getLastCell().myPair){
 
                     //Reset GameState flag from midMove to Moving
                     theGame.gameState = Game.GameState.Moving;
 
                     //Undo highlights from all cells
-                    for (Point highlitCell : Move.getMoveTable().keySet()) {
-                        Cell tempCell = pairToCell.get(highlitCell);
-                        tempCell.undoHighlight();
-                        tempCell.availableSpace = false;
-                    }
+                    Cell.undoHighlights();
                 }
                 break;
-            case Placing:
-                //Place piece on board
+            case Placing: //Place piece on board
                 if (Move.changeLocation(currentPlayer, Game.IN_BAG, this.myPair)) {
 
                     //Tell GUI to place visual piece
                     colorVisualPiece(currentPlayer);
-
-                    //If no mills were just made, it is ok to switch turn
-                    if (Gui.getMyGame().getCurrentMills() == 0) {
-                        theGame.switchTurn();
-                    }
                 }
                 break;
-            case Moving:
-                if(currentPlayer.equals(theGame.pl1)){
-                    Gui.changeStatus("Red move a piece");
-                }else {Gui.changeStatus("Blue move a piece"); }
-
-                //Capture first click, change myGame.midMove to true
+            case Moving: //Capture first click, change myGame.midMove to true
                 //If a cell that was clicked has a piece on it of the current player...
                 if (qTable.get(myPair) != null && qTable.get(myPair).equals(currentPlayer)) {
 
@@ -614,23 +585,22 @@ public class Cell extends Pane {
                 }
                 break;
         }
-
-        //Check if the game is FINISHED or DRAW after each click
-        switch (theGame.gameState) {
-            case Finished:
-                //Display Winner's Dialog Box
-                theGame.setCurrentPlayer(currentPlayer);
-
-                Gui.changeStatus(currentPlayer.getName() + ": WON!!");
-                break;
-            case Draw:
-                //Display Draw Dialog Box
-                theGame.setCurrentPlayer(currentPlayer);
-                Gui.changeStatus("DRAW");
-                break;
-        }
     }
 
+    public static void hightlightMills(ArrayList<Point> freePieces) {
+        if (freePieces == null) {
+            for (Map.Entry<Point, Player> pair : Gui.getMyGame().getQuickTable().entrySet()) {
+                if (!(pair.getValue() == Gui.getMyGame().getCurrentPlayer())) {
+                    showAvailableSpaces(pair.getKey());
+                }
+            }
+        }
+        else {
+            for (Point pair : freePieces) {
+                showAvailableSpaces(pair);
+            }
+        }
+    }
     //Change style of cell to look 'highlighted' when hovered over
     private void hoverHighlightCell() {
     	this.setStyle("-fx-border-color:" + Style.midBlueHex
@@ -652,16 +622,16 @@ public class Cell extends Pane {
     }
 
     //Change style of other cell to look 'highlighted' and mark as available
-    public void showAvailableSpaces(Point movableToLocation){
+    public static void showAvailableSpaces(Point movableToLocation){
         Cell availableCell = pairToCell.get(movableToLocation);
         if (availableCell != null) {
             availableCell.highlightAvailableSpace();
-            availableCell.availableSpace = true;
         }
     }
 
     //Helper function for showAvailableSpaces
     private void highlightAvailableSpace(){
+        this.availableSpace = true;
         this.setStyle("-fx-border-color:" + Style.availableMoveHex
                 + "; -fx-background-color:" + Style.lightBlueHex
                 + "; -fx-border-width: 15; "
@@ -669,11 +639,14 @@ public class Cell extends Pane {
     }
 
     //Change style of this cell to undo 'highlight' for being an available space to move to
-    private void undoHighlight() {
-        if (!this.getStyle().contains("-fx-border-color:" + Style.midBlueHex
-                + "; -fx-background-color:" + Style.lightBlueHex)) {
+    public static void undoHighlights() {
+        for (Cell cell : pairToCell.values()) {
+            cell.availableSpace = false;
+            if (!cell.getStyle().contains("-fx-border-color:" + Style.midBlueHex
+                    + "; -fx-background-color:" + Style.lightBlueHex)) {
 
-            this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
+                cell.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
+            }
         }
     }
 

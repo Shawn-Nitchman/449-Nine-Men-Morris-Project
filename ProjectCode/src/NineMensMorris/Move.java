@@ -93,15 +93,23 @@ public abstract class Move {
         Piece thePiece = findPiece(player, oldPair);
 
         if (thePiece != null && isOpen(newPair) && isLegal(thePiece, newPair)) {
-                thePiece.setPair(newPair);
-                incrementMoveCount();
-                if (myGame.isMidMove()) {myGame.setMidMove(false); }
-                myGame.DrawQuickTable();
-                myGame.isInMill(newPair, true);
-                myGame.updateGameState();
-                //System.out.println(player.getName() + " just placed at " + thePiece.getPair());
-                return true;
+            thePiece.setPair(newPair);
+            incrementMoveCount();
+            if (myGame.isMidMove()) {
+                myGame.setMidMove(false);
             }
+            myGame.DrawQuickTable();
+            if (myGame.isInMill(newPair, true)) {
+                Cell.hightlightMills(myGame.getFreePieces());
+            }
+            //If no mills were just made, it is ok to switch turn
+            if (myGame.getCurrentMills() == 0) {
+                myGame.switchTurn();
+            }
+            myGame.updateGameState();
+            //System.out.println(player.getName() + " just placed at " + thePiece.getPair());
+            return true;
+        }
         return false;
     }
 
@@ -112,6 +120,8 @@ public abstract class Move {
         if (thePiece != null && thePiece.getMyPlayer().getPieces().remove(thePiece)) {
             myGame.decrementMill();
             myGame.DrawQuickTable();
+            if (myGame.getCurrentMills() == 0) { myGame.switchTurn(); }
+
             myGame.updateGameState();
             return true;
         }

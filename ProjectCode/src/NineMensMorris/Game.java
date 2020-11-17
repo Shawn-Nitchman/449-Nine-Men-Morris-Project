@@ -1,4 +1,6 @@
 package NineMensMorris;
+import javafx.scene.text.Text;
+
 import java.awt.*;
 import java.util.*;
 
@@ -76,28 +78,53 @@ public abstract class Game {
 
         //This function updates the GameState enumeration to the correct state (WARNING: Pass-thru behavior)
         public void updateGameState() {
-            gameState = GameState.Moving;
-
-            if (isPlacing()) {
-                if(getCurrentPlayer() == pl1){
-                    Gui.changeStatus("Blue place a piece down");
-                }else {Gui.changeStatus("Red place a piece down"); }
-                gameState = GameState.Placing;
+            if (noMove(currentPlayer) || lostByPieceCount(currentPlayer)) {
+                switchTurn(); //Switch turn back to winner
+                gameState = GameState.Finished;
             }
-            if (midMove) {
-                gameState = GameState.MidMove;
-
+            else if (Move.getMoveCount() >= 150) {
+                gameState = GameState.Draw;
             }
-
-            if (unresolvedMills()) {
-                Gui.changeStatus(currentPlayer.getName() + " has a mill remove oppenents piece");
+            else if (unresolvedMills()) {
                 gameState = GameState.Mill;
                 checkForUnmilledPieces(this.getCurrentPlayer() == pl1 ? pl2 : pl1);
             }
-            if (Move.getMoveCount() >= 150) {gameState = GameState.Draw; }
+            else if (midMove) {
+                gameState = GameState.MidMove;
+            }
+            else if (isPlacing()) {
+                gameState = GameState.Placing;
+            }
+            else {
+                gameState = GameState.Moving;
+            }
+            updateGuiStatus();
+        }
 
-            Player opponent = getCurrentPlayer().equals(pl1) ? pl2 : pl1;
-            if (noMove(opponent) || lostByPieceCount(opponent)) {gameState = GameState.Finished; }
+        protected void updateGuiStatus() {
+            String currentPlayerName = getCurrentPlayer().getName();
+            String statusMessage;
+
+            switch (gameState) {
+                case Finished:
+                    statusMessage = currentPlayerName + ": Has WON the game!!";
+                    break;
+                case Draw:
+                    statusMessage = "The game is a Draw!!";
+                    break;
+                case Mill:
+                    statusMessage =  currentPlayerName + " has a mill remove an opponent's piece";
+                    break;
+                case MidMove:
+                    statusMessage = currentPlayerName + " select where to move your piece";
+                    break;
+                case Placing:
+                    statusMessage = currentPlayerName + " place a piece on the board";
+                    break;
+                default: //Moving
+                    statusMessage = currentPlayerName + " select a piece to move";
+            }
+            Gui.changeStatus(statusMessage);
         }
 
         //Instantiates the freePieces Array and populates it with a players 'free' (unmilled) pieces,
@@ -170,7 +197,8 @@ public abstract class Game {
                     break;
             }
 
-            System.out.println("Current Mills = " + currentMills);
+            //FIXME: Delete this System.out for release
+            // System.out.println("Current Mills = " + currentMills);
             if (currentMills > 0) {gameState = GameState.Mill; }
             return isInAMill;
         }
