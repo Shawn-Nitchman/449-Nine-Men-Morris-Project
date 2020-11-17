@@ -24,13 +24,10 @@ public class Gui extends Application{
     private Scene menuPage;
     private Scene instructionsPage;
 	private static final Game.GamePlay myGame = new Game.GamePlay();
-    //private static String currentPlayer = "R";
     private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
-    //public static String getCurrentPlayer() { return currentPlayer; }
     public static Game.GamePlay getMyGame() { return myGame; }
 
-    //public static void setCurrentPlayer(String p) { currentPlayer = p; }
 
     @Override
     public void start(Stage primaryStage) throws Exception{

@@ -5,19 +5,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Move {
-    private static HashMap<Point, Point> coordTable;
     private static HashMap<Point, ArrayList<Point>> moveTable;
+    private static final ArrayList<Point> pointArray = new ArrayList<Point>();
     private static Game.GamePlay myGame;
     private static int moveCount = 0;
 
     public static void linkUp(Game.GamePlay myGame) {
         Move.myGame = myGame;
-        Move.InitCoordTable();
+        Move.initPointArray();
         Move.InitMoveTable();
     }
 
     //Getters
-    public static HashMap<Point, Point> getCoordTable() { return coordTable; }
     public static HashMap<Point, ArrayList<Point>> getMoveTable(){ return moveTable; }
     public static int getMoveCount() { return moveCount; }
     protected static Game.GamePlay getMyGame() { return myGame; }
@@ -26,41 +25,12 @@ public abstract class Move {
     public static void incrementMoveCount() {moveCount++; }
 
     //Initializers
-    //This Table has the GUI grid coords as the keys and playing coords as values
-    //For transforming between the two systems
-    private static void InitCoordTable() {
-        coordTable = new HashMap<Point, Point>();
-
-        coordTable.put(new Point(0, 0), new Point(2, 0));
-        coordTable.put(new Point(0, 3), new Point(2, 7));
-        coordTable.put(new Point(0, 6), new Point(2, 6));
-
-        coordTable.put(new Point(1, 1), new Point(1, 0));
-        coordTable.put(new Point(1, 3), new Point(1, 7));
-        coordTable.put(new Point(1, 5), new Point(1, 6));
-
-        coordTable.put(new Point(2, 2), new Point(0, 0));
-        coordTable.put(new Point(2, 3), new Point(0, 7));
-        coordTable.put(new Point(2, 4), new Point(0, 6));
-
-        coordTable.put(new Point(3, 0), new Point(2, 1));
-        coordTable.put(new Point(3, 1), new Point(1, 1));
-        coordTable.put(new Point(3, 2), new Point(0, 1));
-        coordTable.put(new Point(3, 4), new Point(0, 5));
-        coordTable.put(new Point(3, 5), new Point(1, 5));
-        coordTable.put(new Point(3, 6), new Point(2, 5));
-
-        coordTable.put(new Point(4, 2), new Point(0, 2));
-        coordTable.put(new Point(4, 3), new Point(0, 3));
-        coordTable.put(new Point(4, 4), new Point(0, 4));
-
-        coordTable.put(new Point(5, 1), new Point(1, 2));
-        coordTable.put(new Point(5, 3), new Point(1, 3));
-        coordTable.put(new Point(5, 5), new Point(1, 4));
-
-        coordTable.put(new Point(6, 0), new Point(2, 2));
-        coordTable.put(new Point(6, 3), new Point(2, 3));
-        coordTable.put(new Point(6, 6), new Point(2, 4));
+    private static void initPointArray() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 8; j++) {
+                pointArray.add(new Point(i, j));
+            }
+        }
     }
 
     //This table has the 24 playable places in playing coords as the keys and the places one can move from that key as values
@@ -68,7 +38,7 @@ public abstract class Move {
     private static void InitMoveTable() {
         moveTable = new HashMap<Point, ArrayList<Point>>();
 
-        for (Point pair : coordTable.values()) {
+        for (Point pair : pointArray) {
             int myY = pair.y;
             int myX = pair.x;
 

@@ -164,7 +164,7 @@ public abstract class Game {
             return isInAMill;
         }
 
-        //Helper Function for inMill
+        //Helper Function for isInMill
         private boolean checkMill(Player player, Point p1, Point p2) {
             HashMap<Point, Player> myQuickTable = getQuickTable();
             return myQuickTable.containsKey(p1) &&

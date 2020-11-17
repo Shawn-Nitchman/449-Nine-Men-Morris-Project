@@ -14,96 +14,84 @@ import java.util.HashMap;
 
 // Cells make up the 7x7 grid on the board of playable and non-playable places
 public class Cell extends Pane {
-    private final boolean validSpace; // This tells us if the cell is playable or not
+    //This maps the GUI's coordinate system with the GamePlay's coordinate system
+    //Also used for finding all the playable locations
+    private static HashMap<Point, Point> coordTable = null;
+
+    //This is used to find a particular cell based on its pair attribute
+    public static HashMap<Point, Cell> pairToCell = new HashMap<>();
+
+    //Instance variables
     private Point myPair = new Point (-99,-99); //add pair for valid space position
-    //private boolean hoverHighlight;
-    private boolean availableSpace; // This indicates if you can move a piece here
+    private boolean availableSpace = false; // This indicates if you can move a piece here
     public Ellipse visualPiece = new Ellipse(this.getWidth() / 3, this.getHeight() / 3,
             this.getWidth(), this.getHeight());
 
-    public static HashMap<Point, Cell> pairToCell = new HashMap<>();
-
-    private Point getCoords(int i, int j) {
-        Point oldCoord = new Point(i, j);
-
-        return Move.getCoordTable().get(oldCoord);
-    }
-
-    //This takes the value of x (should be 0-6) and adds it to 97
-    //to get the ascii value of a-g
-    public char convertIntToChar(int x) {
-        x = x + 97;
-        return (char) x;
-    }
-
-    //This uses the converted char value to determine whether it is a playable
-    //spot on the 7x7 grid. it returns true if it is and false if it isn't.
-    private boolean checkValidSpace(int intCoordX, int y) {
-        char x = convertIntToChar(intCoordX);
-        if (x == 'a' || x == 'g') {
-            if (y == 6 || y == 3 || y == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (x == 'b' || x == 'f') {
-            if (y == 5 || y == 3 || y == 1) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (x == 'c' || x == 'e') {
-            if (y == 4 || y == 3 || y == 2) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (x == 'd') {
-            if (y == 6 || y == 5 || y == 4 || y == 2 || y == 1 || y == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    // Cell constructor checks if it is a validSpace and initializes drawings for the cell
-    // Then, it initializes the coordinates
-
+    // Cell constructor checks if it is a validSpace and initializes the attributes for this cell
     public Cell(int i, int j){
-        this.availableSpace = false;
-        validSpace = checkValidSpace(i, j);
+        if (coordTable == null) { InitCoordTable(); } //Only run once
         initializeDrawings(i, j);
         this.setPrefSize(150, 150); // sets default cell size (refactor sometime!)
-        initializeCoords(i, j, validSpace);
 
-        //Setup the properties for the Ellipse in this Cell
-        visualPiece.centerXProperty().bind(this.widthProperty().divide(2));
-        visualPiece.centerYProperty().bind(this.heightProperty().divide(2));
-        visualPiece.radiusXProperty().bind(this.widthProperty().divide(3));
-        visualPiece.radiusYProperty().bind(this.heightProperty().divide(3));
-        visualPiece.setStroke(javafx.scene.paint.Color.BLACK);
-        visualPiece.setVisible(false);
-        getChildren().add(visualPiece);
-    }
-
-    //This initializes the coordinates for our coordinate system
-    //given the position on the 7x7 grid and whether it's a playable space
-    private void initializeCoords(int i, int j, boolean validSpace) {
-        if (validSpace) {
-            //Assign myPair via coordTable
+        //If this cell is a valid playable intersection:
+        if (checkValidSpace(i, j)) {
+            //Assign myPair via coordTable and map this cell to that pair in pairToCell HashMap
             this.myPair = new Point(getCoords(i, j));
             pairToCell.put(myPair, this);
 
+            //Add Event Handlers
             this.setOnMouseEntered(e -> hoverHighlightCell());
             this.setOnMouseExited(e -> undoHoverHighlight());
             this.setOnMouseClicked(this::handleClick);
+
+            //Setup the properties for the Ellipse in this Cell
+            visualPiece.centerXProperty().bind(this.widthProperty().divide(2));
+            visualPiece.centerYProperty().bind(this.heightProperty().divide(2));
+            visualPiece.radiusXProperty().bind(this.widthProperty().divide(3));
+            visualPiece.radiusYProperty().bind(this.heightProperty().divide(3));
+            visualPiece.setStroke(javafx.scene.paint.Color.BLACK);
+            visualPiece.setVisible(false);
+            getChildren().add(visualPiece);
         }
     }
+    //This Table has the GUI grid coords as the keys and playing coords as values
+    //For transforming between the two systems
+    private static void InitCoordTable() {
+        coordTable = new HashMap<Point, Point>();
 
-    //This whole switch initializes the drawings for the board for a new game
+        coordTable.put(new Point(0, 0), new Point(2, 0));
+        coordTable.put(new Point(0, 3), new Point(2, 7));
+        coordTable.put(new Point(0, 6), new Point(2, 6));
+
+        coordTable.put(new Point(1, 1), new Point(1, 0));
+        coordTable.put(new Point(1, 3), new Point(1, 7));
+        coordTable.put(new Point(1, 5), new Point(1, 6));
+
+        coordTable.put(new Point(2, 2), new Point(0, 0));
+        coordTable.put(new Point(2, 3), new Point(0, 7));
+        coordTable.put(new Point(2, 4), new Point(0, 6));
+
+        coordTable.put(new Point(3, 0), new Point(2, 1));
+        coordTable.put(new Point(3, 1), new Point(1, 1));
+        coordTable.put(new Point(3, 2), new Point(0, 1));
+        coordTable.put(new Point(3, 4), new Point(0, 5));
+        coordTable.put(new Point(3, 5), new Point(1, 5));
+        coordTable.put(new Point(3, 6), new Point(2, 5));
+
+        coordTable.put(new Point(4, 2), new Point(0, 2));
+        coordTable.put(new Point(4, 3), new Point(0, 3));
+        coordTable.put(new Point(4, 4), new Point(0, 4));
+
+        coordTable.put(new Point(5, 1), new Point(1, 2));
+        coordTable.put(new Point(5, 3), new Point(1, 3));
+        coordTable.put(new Point(5, 5), new Point(1, 4));
+
+        coordTable.put(new Point(6, 0), new Point(2, 2));
+        coordTable.put(new Point(6, 3), new Point(2, 3));
+        coordTable.put(new Point(6, 6), new Point(2, 4));
+    }
+
+    //This whole switch initializes the drawings for the visual board for a new game
     private void initializeDrawings(int i, int j) {
         this.setStyle("-fx-background-color: #afc1cc; -fx-text-fill: white;");
         switch (i) {
@@ -450,8 +438,56 @@ public class Cell extends Pane {
         }
     }
 
+    //This uses the converted char value to determine whether it is a playable
+    //spot on the 7x7 grid. it returns true if it is and false if it isn't.
+    private boolean checkValidSpace(int intCoordX, int y) {
+        char x = convertIntToChar(intCoordX);
+        if (x == 'a' || x == 'g') {
+            if (y == 6 || y == 3 || y == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (x == 'b' || x == 'f') {
+            if (y == 5 || y == 3 || y == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (x == 'c' || x == 'e') {
+            if (y == 4 || y == 3 || y == 2) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (x == 'd') {
+            if (y == 6 || y == 5 || y == 4 || y == 2 || y == 1 || y == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    //Helper function for checkValidSpace
+    private char convertIntToChar(int x) {
+        //Take the value of x (should be 0-6) and add it to 97
+        //to get the ascii value of a-g
+        x = x + 97;
+        return (char) x;
+    }
+
+    //Finds the playing coordinate from the GUI coordinate through the CoordTable in the Move Class
+    private Point getCoords(int i, int j) {
+        Point oldCoord = new Point(i, j);
+        return coordTable.get(oldCoord);
+    }
+
     // This is called when a validSpace is clicked to handle how a piece is placed
     private void handleClick(MouseEvent e) {
+        //Local variables for the GamePlay class, the current player and the quickTable
         Game.GamePlay theGame = Gui.getMyGame();
         Player currentPlayer = theGame.getCurrentPlayer();
         HashMap<Point, Player> qTable = theGame.getQuickTable();
@@ -465,19 +501,21 @@ public class Cell extends Pane {
         */
 
         switch (theGame.gameState) {
-            case Finished:
-                break;
-            case Draw:
-                break;
             case Mill:
                 //Try to Remove piece at this location
+                //If there is a piece on this cell AND it is of the other player
                 if (qTable.get(myPair) != null && qTable.get(myPair) != currentPlayer) {
+
+                    //Local variable for freePieces Array
                     ArrayList<Point> freePieces = Gui.getMyGame().getFreePieces();
 
+                    //If freePieces equals null, all opponents pieces are in mills, any piece can be taken
+                    //If the piece clicked is in the freePieces Array, is it not in a mill, and can be taken
                     if (freePieces == null || freePieces.contains(myPair)) {
                         removeVisualPiece(this);
                         Move.removePiece(myPair);
 
+                        //If no mills were just made, it is ok to switch turn
                         if (Gui.getMyGame().getCurrentMills() == 0) {
                             theGame.switchTurn();
                         }
@@ -487,18 +525,30 @@ public class Cell extends Pane {
             case MidMove:
                 //Try to Move lastPiece to new Location
                 if (Move.changeLocation(currentPlayer, theGame.getLastCell().myPair, this.myPair)) {
+
+                    //Tell GUI to 'move' visual piece
+                    removeVisualPiece(theGame.getLastCell());
+                    colorVisualPiece(currentPlayer);
+
+                    //Undo all highlights, as we have completed moving the piece
                     for (Point pair : pairToCell.keySet()) {
                         Cell tempCell = pairToCell.get(pair);
                         tempCell.undoHighlight();
                         tempCell.availableSpace = false;
                     }
-                    removeVisualPiece(theGame.getLastCell());
-                    colorVisualPiece(currentPlayer);
+
+                    //If no mills were just made, it is ok to switch turn
                     if (Gui.getMyGame().getCurrentMills() == 0) {
                         theGame.switchTurn();
                     }
+
+                    //If you click on the same piece that you selected to move, you will unselect that piece
                 } else if (myPair == theGame.getLastCell().myPair){
+
+                    //Reset GameState flag from midMove to Moving
                     theGame.gameState = Game.GameState.Moving;
+
+                    //Undo highlights from all cells
                     for (Point highlitCell : Move.getMoveTable().keySet()) {
                         Cell tempCell = pairToCell.get(highlitCell);
                         tempCell.undoHighlight();
@@ -509,7 +559,11 @@ public class Cell extends Pane {
             case Placing:
                 //Place piece on board
                 if (Move.changeLocation(currentPlayer, Game.IN_BAG, this.myPair)) {
+
+                    //Tell GUI to place visual piece
                     colorVisualPiece(currentPlayer);
+
+                    //If no mills were just made, it is ok to switch turn
                     if (Gui.getMyGame().getCurrentMills() == 0) {
                         theGame.switchTurn();
                     }
@@ -517,23 +571,30 @@ public class Cell extends Pane {
                 break;
             case Moving:
                 //Capture first click, change myGame.midMove to true
+                //If a cell that was clicked has a piece on it of the current player...
                 if (qTable.get(myPair) != null && qTable.get(myPair).equals(currentPlayer)) {
 
+                    //Make sure that piece has at least one legal move, using moveTable <Point, Point[Available Locations]>
                     boolean canMove = false;
                     for (Point checkPair : Move.getMoveTable().get(myPair)) {
                         if (Move.isOpen(checkPair)) {
-                            showAvailableSpaces(checkPair);
+                            showAvailableSpaces(checkPair); //Highlight as an available place to move
                             canMove = true;
                         }
                     }
+                    //If player is flying, then all open cells are available to move to and should be highlighted
                     if (theGame.getCurrentPlayer().isFlying()) {
                         canMove = true;
-                        for (Point pair : Move.getCoordTable().values()) {
+                        for (Point pair : coordTable.values()) {
                             if (Move.isOpen(pair)) {
                                 showAvailableSpaces(pair);
                             }
                         }
                     }
+
+                    //If we clicked on a movable piece, capture the cell we are moving from (this),
+                    //Set midMove flag to true, because the next click should attempt to move piece to new location
+                    //and Update the GameState
                     if (canMove) {
                         theGame.setLastCell(this);
                         theGame.setMidMove(true);
@@ -542,6 +603,8 @@ public class Cell extends Pane {
                 }
                 break;
         }
+
+        //Check if the game is FINISHED or DRAW after each click
         switch (theGame.gameState) {
             case Finished:
                 //Display Winner's Dialog Box
@@ -555,24 +618,37 @@ public class Cell extends Pane {
                 break;
         }
     }
-    
+
+    //Change style of cell to look 'highlighted' when hovered over
     private void hoverHighlightCell() {
     	this.setStyle("-fx-border-color:" + Style.midBlueHex
     		    + "; -fx-background-color:" + Style.lightBlueHex
     		    + "; -fx-border-width: 15; "
     		    + "-fx-border-radius: 50%;");
     }
-    
+
+    //Change style of cell to remove 'highlighted' look when un-hovered, unless it is already 'highlighted' as a movable place
     private void undoHoverHighlight() {
-        if (!this.availableSpace){
+        //If this cell has been flagged as an available place to move, then redo that highlight
+        if (this.availableSpace){
+            highlightAvailableSpace();
+        }
+        else{ //Otherwise remove highlight from cell
             this.setStyle("-fx-background-color: " + Style.lightBlueHex
                     + "; -fx-text-fill: white;");
         }
-        else{
-            highlightAvailableSpace();
+    }
+
+    //Change style of other cell to look 'highlighted' and mark as available
+    public void showAvailableSpaces(Point movableToLocation){
+        Cell availableCell = pairToCell.get(movableToLocation);
+        if (availableCell != null) {
+            availableCell.highlightAvailableSpace();
+            availableCell.availableSpace = true;
         }
     }
 
+    //Helper function for showAvailableSpaces
     private void highlightAvailableSpace(){
         this.setStyle("-fx-border-color:" + Style.availableMoveHex
                 + "; -fx-background-color:" + Style.lightBlueHex
@@ -580,17 +656,7 @@ public class Cell extends Pane {
                 + "-fx-border-radius: 50%;");
     }
 
-    public void showAvailableSpaces(Point currentLocation){
-        Cell availableCell = pairToCell.get(currentLocation);
-        if (availableCell != null) {
-            availableCell.highlightAvailableSpace();
-            availableCell.availableSpace = true;
-        }
-        // use getCellFromPair hashmap to get the cells to highlight
-        // each cell returned must call highlightAvailableSpace
-        // change availableSpace = true for each cell returned
-    }
-
+    //Change style of this cell to undo 'highlight' for being an available space to move to
     private void undoHighlight() {
         if (!this.getStyle().contains("-fx-border-color:" + Style.midBlueHex
                 + "; -fx-background-color:" + Style.lightBlueHex)) {
@@ -599,7 +665,9 @@ public class Cell extends Pane {
         }
     }
 
+    //Change style of Ellipse in cell to a player color, show the Ellipse and remove one Ellipse from players 'bag'
     public void colorVisualPiece(Player player) {
+        //Player 1's pieces are currently darkRed, while Player 2's piece are darkBlue (looks gray to me)
         if (player.equals(Gui.getMyGame().pl1)) {
             visualPiece.setFill(Style.darkRed);
             Gui.removeVBoxElement(Gui.player1);
@@ -610,8 +678,11 @@ public class Cell extends Pane {
         visualPiece.setVisible(true);
     }
 
-    private void removeVisualPiece(Cell theCell) {
+    //Change the style of Ellipse in a cell to be invisible, thereby visually removing the piece from the GUI board
+    private static void removeVisualPiece(Cell theCell) {
         Node theNode = null;
+
+        //For the elements in the cell, find the Ellipse
         for (Node node : theCell.getChildren()) {
             if (node instanceof Ellipse) {
                 theNode = node;
