@@ -32,6 +32,7 @@ public class Gui extends Application{
     //public static String getCurrentPlayer() { return currentPlayer; }
 =======
 >>>>>>> bd69c13ac9e852ea9a364f2502d5ddd914dc8e26
+
     public static Game.GamePlay getMyGame() { return myGame; }
 
 
