@@ -65,7 +65,7 @@ public abstract class Game {
 
         //Main Functions
         //The quick table maps the piece vectors to their player for quicker (and safe) access
-        protected void DrawQuickTable() {
+        protected void drawQuickTable() {
             quickTable = new HashMap<Point, Player>();
             for (Player player : players) {
                 for (Piece piece : player.getPieces()) {
@@ -199,7 +199,8 @@ public abstract class Game {
 
             //FIXME: Delete this System.out for release
             // System.out.println("Current Mills = " + currentMills);
-            if (currentMills > 0) {gameState = GameState.Mill; }
+            if (currentMills > 0) { gameState = GameState.Mill; }
+            if (toCount && currentMills > 0) {checkForUnmilledPieces(this.getCurrentPlayer() == pl1 ? pl2 : pl1); }
             return isInAMill;
         }
 

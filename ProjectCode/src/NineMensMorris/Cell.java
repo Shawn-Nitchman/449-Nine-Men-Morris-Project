@@ -534,7 +534,9 @@ public class Cell extends Pane {
 
                     //Undo all highlights, as we have completed moving the piece
                     Cell.undoHighlights();
-
+                    if (theGame.unresolvedMills()) {
+                        Cell.hightlightMills(theGame.getFreePieces());
+                    }
                 //If you click on the same piece that you selected to move, you will unselect that piece
                 } else if (myPair == theGame.getLastCell().myPair){
 
@@ -550,6 +552,9 @@ public class Cell extends Pane {
 
                     //Tell GUI to place visual piece
                     colorVisualPiece(currentPlayer);
+                    if (theGame.unresolvedMills()) {
+                        Cell.hightlightMills(theGame.getFreePieces());
+                    }
                 }
                 break;
             case Moving: //Capture first click, change myGame.midMove to true

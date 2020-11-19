@@ -98,10 +98,9 @@ public abstract class Move {
             if (myGame.isMidMove()) {
                 myGame.setMidMove(false);
             }
-            myGame.DrawQuickTable();
-            if (myGame.isInMill(newPair, true)) {
-                Cell.hightlightMills(myGame.getFreePieces());
-            }
+            myGame.drawQuickTable();
+            myGame.isInMill(newPair, true);
+
             //If no mills were just made, it is ok to switch turn
             if (myGame.getCurrentMills() == 0) {
                 myGame.switchTurn();
@@ -119,7 +118,7 @@ public abstract class Move {
 
         if (thePiece != null && thePiece.getMyPlayer().getPieces().remove(thePiece)) {
             myGame.decrementMill();
-            myGame.DrawQuickTable();
+            myGame.drawQuickTable();
             if (myGame.getCurrentMills() == 0) { myGame.switchTurn(); }
 
             myGame.updateGameState();

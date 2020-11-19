@@ -97,6 +97,7 @@ public class Gui extends Application{
         border.setCenter(gridpane);
         border.setRight(player2);
         gamePage = new Scene(border, 850, 650);
+        myGame.updateGuiStatus();
     }
 
 
