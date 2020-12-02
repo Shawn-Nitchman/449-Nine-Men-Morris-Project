@@ -7,6 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -49,18 +51,33 @@ public class Gui extends Application{
         window.show();
     }
 
+    private void goToGamePage(RadioButton singlePlayer){
+        window.setScene(gamePage);
+        myGame.setSinglePlayer(singlePlayer.isSelected());
+        System.out.print("Single player game:" + myGame.isSinglePlayer());
+    }
+
+    // this creates all the components on the menuPage
     private void initializeMenu(){
         VBox menuLayout = new VBox(20);
         menuLayout.setSpacing(10);
         menuLayout.setPadding(new Insets(0, 20, 10, 20));
         menuLayout.setAlignment(Pos.CENTER);
 
+        ToggleGroup numberOfPlayers = new ToggleGroup();
+        RadioButton singlePlayer = new RadioButton("Single Player");
+        RadioButton twoPlayer = new RadioButton("Two Players");
+        singlePlayer.setToggleGroup(numberOfPlayers);
+        twoPlayer.setToggleGroup(numberOfPlayers);
+        twoPlayer.setSelected(true);
+
         Label menuDesc = new Label("Welcome to 9 Men Morris");
         Button startGame = new Button("Start Game");
-        startGame.setOnMouseClicked(e -> window.setScene(gamePage));
+        startGame.setOnMouseClicked(e -> goToGamePage(singlePlayer));
         Button instructions = new Button("How to play");
         instructions.setOnMouseClicked(e -> window.setScene(instructionsPage));
-        menuLayout.getChildren().addAll(menuDesc, startGame, instructions);
+
+        menuLayout.getChildren().addAll(menuDesc, singlePlayer, twoPlayer, startGame, instructions);
         menuPage = new Scene(menuLayout, 500, 500);
     }
 
@@ -76,9 +93,7 @@ public class Gui extends Application{
         pageLayout.setSpacing(10);
         Button menuReturn = new Button("Return to Menu");
         menuReturn.setOnMouseClicked(e -> window.setScene(menuPage));
-        Button startGame = new Button("Start Game");
-        startGame.setOnMouseClicked(e -> window.setScene(gamePage));
-        pageLayout.getChildren().addAll(instructionsDesc, menuReturn, startGame);
+        pageLayout.getChildren().addAll(instructionsDesc, menuReturn);
         instructionsPage = new Scene(pageLayout, 500, 500);
     }
 

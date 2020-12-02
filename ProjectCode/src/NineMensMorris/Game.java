@@ -1,8 +1,9 @@
 package NineMensMorris;
-import javafx.scene.text.Text;
-
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 
 public abstract class Game {
@@ -22,6 +23,7 @@ public abstract class Game {
     protected boolean midMove = false;
     protected Cell lastCell = null;
     protected ArrayList<Point> freePieces = null;
+    protected boolean singlePlayer;
 
     public static class GamePlay extends Game {
 
@@ -41,6 +43,7 @@ public abstract class Game {
         public Cell getLastCell() { return lastCell; }
         public ArrayList<Point> getFreePieces() { return freePieces; }
         public boolean isMidMove() { return midMove; }
+        public boolean isSinglePlayer() { return singlePlayer;}
 
         //Setters
         public void switchTurn() { currentPlayer = currentPlayer == pl1 ? pl2 : pl1; setFreePiecesToNull();}
@@ -50,6 +53,7 @@ public abstract class Game {
         public void setLastCell(Cell cell) {lastCell = cell; }
         public void setFreePiecesToNull() { freePieces = null; }
         public void setMidMove(boolean flag) {midMove = flag; }
+        public void setSinglePlayer(boolean isSinglePlayer) {singlePlayer = isSinglePlayer;}
 
 
         //Initializers
