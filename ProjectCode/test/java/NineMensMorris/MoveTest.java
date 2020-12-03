@@ -6,19 +6,21 @@ import java.awt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest {
-    Game.GamePlay theGame;
+        Gui theGui;
+        Game.GamePlay theGame;
 
 
-    @org.junit.jupiter.api.BeforeEach
-    void setUp() {
-        theGame = new Game.GamePlay();
-    }
+        @org.junit.jupiter.api.BeforeEach
+        void setUp() {
+            theGui = new Gui();
+            theGame = new Game.GamePlay();
+        }
 
-    @org.junit.jupiter.api.AfterEach
-    void tearDown() {
-        theGame = null;
-    }
-
+        @org.junit.jupiter.api.AfterEach
+        void tearDown() {
+            theGui = null;
+            theGame = null;
+        }
 
     @Test
     public void isOpenTest() throws Exception {
@@ -77,6 +79,7 @@ class MoveTest {
         Move.changeLocation(theGame.pl1, new Point(Game.IN_BAG), new Point(1,1));
         Move.changeLocation(theGame.pl2, new Point(Game.IN_BAG), new Point(2,1));
 
+        ///Seems like quickTable contains 0,0
         assertFalse(Move.isOpen(new Point(0,0)));
         assertTrue(Move.removePiece(new Point(0,0)));
         assertTrue(Move.isOpen(new Point(0, 0)));

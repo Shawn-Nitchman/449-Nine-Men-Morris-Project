@@ -10,15 +10,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest extends Game {
 
+    Gui theGui;
     Game.GamePlay theGame;
 
-    @BeforeEach
+
+    @org.junit.jupiter.api.BeforeEach
     void setUp() {
+        theGui = new Gui();
         theGame = new Game.GamePlay();
     }
 
-    @AfterEach
+    @org.junit.jupiter.api.AfterEach
     void tearDown() {
+        theGui = null;
         theGame = null;
     }
 
