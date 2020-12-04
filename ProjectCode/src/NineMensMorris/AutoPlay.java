@@ -2,6 +2,7 @@ package NineMensMorris;
 
 import java.awt.*;
 import java.util.Random;
+import java.util.Vector;
 
 public class AutoPlay extends Player {
 
@@ -16,6 +17,13 @@ public class AutoPlay extends Player {
         xCord = rand.nextInt(2);
         yCord = rand.nextInt(7);
         return new Point(xCord, yCord);
+    }
+
+    //random index generator, takes size of vector and returns a point
+    public Point randomPointInVector(Vector<Point> pointVector){
+        Random rand = new Random();
+        int index = rand.nextInt(pointVector.size());
+        return pointVector.elementAt(index);
     }
 
     public boolean placing(){
