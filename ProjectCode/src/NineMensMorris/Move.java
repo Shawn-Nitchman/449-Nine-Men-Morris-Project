@@ -7,10 +7,10 @@ import java.util.HashMap;
 public abstract class Move {
     private static HashMap<Point, ArrayList<Point>> moveTable;
     private static final ArrayList<Point> pointArray = new ArrayList<Point>();
-    private static Game.GamePlay myGame;
+    private static Game myGame;
     private static int moveCount = 0;
 
-    public static void linkUp(Game.GamePlay myGame) {
+    public static void linkUp(Game myGame) {
         Move.myGame = myGame;
         Move.initPointArray();
         Move.InitMoveTable();
@@ -19,7 +19,7 @@ public abstract class Move {
     //Getters
     public static HashMap<Point, ArrayList<Point>> getMoveTable(){ return moveTable; }
     public static int getMoveCount() { return moveCount; }
-    protected static Game.GamePlay getMyGame() { return myGame; }
+    protected static Game getMyGame() { return myGame; }
 
     //Setter
     public static void incrementMoveCount() {moveCount++; }

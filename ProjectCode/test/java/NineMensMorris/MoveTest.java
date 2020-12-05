@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest {
         Gui theGui;
-        Game.GamePlay theGame;
+        Game theGame;
 
 
         @org.junit.jupiter.api.BeforeEach
         void setUp() {
             theGui = new Gui();
-            theGame = new Game.GamePlay();
+            theGame = new Game();
         }
 
         @org.junit.jupiter.api.AfterEach

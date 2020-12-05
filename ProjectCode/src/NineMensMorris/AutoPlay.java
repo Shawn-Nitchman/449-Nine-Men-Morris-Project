@@ -1,6 +1,7 @@
 package NineMensMorris;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Vector;
 
@@ -26,13 +27,27 @@ public class AutoPlay extends Player {
         return pointVector.elementAt(index);
     }
 
+    public void computersTurn() {
+        Game.GameState currentState = Gui.getMyGame().gameState;
+        switch (currentState) {
+            case Placing:
+                placing();
+                break;
+            case Mill:
+                break;
+            case Moving:
+                break;
+            case MidMove:
+                break;
+        }
+    }
+
     public boolean placing(){
         Point placingPoint = new Point(randomGenerator());
         if (Move.isOpen(placingPoint)){
             Move.changeLocation(this, Game.IN_BAG, placingPoint);
             return true;
         }
-
         return false;
     }
 

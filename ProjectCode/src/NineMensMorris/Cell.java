@@ -28,6 +28,9 @@ public class Cell extends Pane {
     public Ellipse visualPiece = new Ellipse(this.getWidth() / 3, this.getHeight() / 3,
             this.getWidth(), this.getHeight());
 
+    public Point getMyPair() {return myPair; }
+    public HashMap<Point, Point> getCoordTable() {return coordTable; }
+
     // Cell constructor checks if it is a validSpace and initializes the attributes for this cell
     public Cell(int i, int j){
         if (coordTable == null) { InitCoordTable(); } //Only run once
@@ -43,7 +46,7 @@ public class Cell extends Pane {
             //Add Event Handlers
             this.setOnMouseEntered(e -> hoverHighlightCell());
             this.setOnMouseExited(e -> undoHoverHighlight());
-            this.setOnMouseClicked(this::handleClick);
+            this.setOnMouseClicked(e -> EventHandler.handleClick(this));
 
             //Setup the properties for the Ellipse in this Cell
             visualPiece.centerXProperty().bind(this.widthProperty().divide(2));
@@ -487,111 +490,8 @@ public class Cell extends Pane {
     }
 
     // This is called when a validSpace is clicked to handle how a piece is placed
-    private void handleClick(MouseEvent e) {
-        //Local variables for the GamePlay class, the current player and the quickTable
-        Game.GamePlay theGame = Gui.getMyGame();
-        Player currentPlayer = theGame.getCurrentPlayer();
-        HashMap<Point, Player> qTable = theGame.getQuickTable();
 
-
-        /*
-        //FIXME: Event Experimentation
-        System.out.println("getEventType : " + e.getEventType().toString() + "\n" +
-                "getSource : " + e.getSource().toString() + "\n" +
-                "getTarget : " + e.getTarget().toString() + "\n" +
-                "toString : " + e.toString() + "\n");
-        */
-
-        switch (theGame.gameState) {
-            case Mill: //Try to Remove piece at this location
-                //If there is a piece on this cell AND it is of the other player
-                if (qTable.get(myPair) != null && qTable.get(myPair) != currentPlayer) {
-
-                    //Local variable for freePieces Array
-                    ArrayList<Point> freePieces = Gui.getMyGame().getFreePieces();
-
-                    //If freePieces equals null, all opponents pieces are in mills, any piece can be taken
-                    //If the piece clicked is in the freePieces Array, is it not in a mill, and can be taken
-                    if (freePieces == null) {
-                        removeVisualPiece(this);
-                        Move.removePiece(myPair);
-                       Cell.undoHighlights();
-                    }
-                    else if (freePieces.contains(myPair)) {
-                        removeVisualPiece(this);
-                        Move.removePiece(myPair);
-                        Cell.undoHighlights();
-                    }
-
-                }
-                break;
-            case MidMove: //Try to Move lastPiece to new Location
-                if (Move.changeLocation(currentPlayer, theGame.getLastCell().myPair, this.myPair)) {
-
-                    //Tell GUI to 'move' visual piece
-                    removeVisualPiece(theGame.getLastCell());
-                    colorVisualPiece(currentPlayer);
-
-                    //Undo all highlights, as we have completed moving the piece
-                    Cell.undoHighlights();
-                    if (theGame.unresolvedMills()) {
-                        Cell.hightlightMills(theGame.getFreePieces());
-                    }
-                //If you click on the same piece that you selected to move, you will unselect that piece
-                } else if (myPair == theGame.getLastCell().myPair){
-
-                    //Reset GameState flag from midMove to Moving
-                    theGame.gameState = Game.GameState.Moving;
-
-                    //Undo highlights from all cells
-                    Cell.undoHighlights();
-                }
-                break;
-            case Placing: //Place piece on board
-                if (Move.changeLocation(currentPlayer, Game.IN_BAG, this.myPair)) {
-
-                    //Tell GUI to place visual piece
-                    colorVisualPiece(currentPlayer);
-                    if (theGame.unresolvedMills()) {
-                        Cell.hightlightMills(theGame.getFreePieces());
-                    }
-                }
-                break;
-            case Moving: //Capture first click, change myGame.midMove to true
-                //If a cell that was clicked has a piece on it of the current player...
-                if (qTable.get(myPair) != null && qTable.get(myPair).equals(currentPlayer)) {
-
-                    //Make sure that piece has at least one legal move, using moveTable <Point, Point[Available Locations]>
-                    boolean canMove = false;
-                    for (Point checkPair : Move.getMoveTable().get(myPair)) {
-                        if (Move.isOpen(checkPair)) {
-                            showAvailableSpaces(checkPair); //Highlight as an available place to move
-                            canMove = true;
-                        }
-                    }
-                    //If player is flying, then all open cells are available to move to and should be highlighted
-                    if (theGame.getCurrentPlayer().isFlying()) {
-                        canMove = true;
-                        for (Point pair : coordTable.values()) {
-                            if (Move.isOpen(pair)) {
-                                showAvailableSpaces(pair);
-                            }
-                        }
-                    }
-
-                    //If we clicked on a movable piece, capture the cell we are moving from (this),
-                    //Set midMove flag to true, because the next click should attempt to move piece to new location
-                    //and Update the GameState
-                    if (canMove) {
-                        theGame.setLastCell(this);
-                        theGame.setMidMove(true);
-                        theGame.updateGameState();
-                    }
-                }
-                break;
-        }
-    }
-
+    //Highlighting and Color Functions
     public static void hightlightMills(ArrayList<Point> freePieces) {
         if (freePieces == null) {
             for (Map.Entry<Point, Player> pair : Gui.getMyGame().getQuickTable().entrySet()) {
@@ -670,7 +570,7 @@ public class Cell extends Pane {
     }
 
     //Change the style of Ellipse in a cell to be invisible, thereby visually removing the piece from the GUI board
-    private static void removeVisualPiece(Cell theCell) {
+    public static void removeVisualPiece(Cell theCell) {
         Node theNode = null;
 
         //For the elements in the cell, find the Ellipse

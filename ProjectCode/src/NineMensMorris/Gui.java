@@ -25,13 +25,13 @@ public class Gui extends Application{
     private Scene gamePage;
     private Scene menuPage;
     private Scene instructionsPage;
-	private static final Game.GamePlay myGame = new Game.GamePlay();
+    private static Game myGame = new Game();
     private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
     public static Text statusText = new Text("");
 
     //Getter
-    public static Game.GamePlay getMyGame() { return myGame; }
+    public static Game getMyGame() { return myGame; }
 
 
     @Override
