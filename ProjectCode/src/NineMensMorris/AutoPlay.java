@@ -95,7 +95,7 @@ public class AutoPlay extends Player {
         } else {
             do {
                 moveFromPair = randomPointInVector(movePoints);
-                System.out.println("Trying :" + moveFromPair);
+                //System.out.println("Trying :" + moveFromPair);
                 for (Point checkPair : Move.getMoveTable().get(moveFromPair)) {
                     if (Move.isOpen(checkPair)) {
                         possibleMoves.add(checkPair);
@@ -104,7 +104,7 @@ public class AutoPlay extends Player {
                 if (possibleMoves.isEmpty()) {
                     movePoints.remove(moveFromPair);
                 }
-                System.out.println("Possible move vector = " + possibleMoves.toString());
+                //System.out.println("Possible move vector = " + possibleMoves.toString());
             } while (possibleMoves.isEmpty());
         }
 

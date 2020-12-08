@@ -54,7 +54,7 @@ public class Gui extends Application{
     private void goToGamePage(RadioButton singlePlayer){
         window.setScene(gamePage);
         myGame.setSinglePlayer(singlePlayer.isSelected());
-        System.out.print("Single player game:" + myGame.isSinglePlayer());
+        //System.out.print("Single player game:" + myGame.isSinglePlayer());
     }
 
     // this creates all the components on the menuPage
