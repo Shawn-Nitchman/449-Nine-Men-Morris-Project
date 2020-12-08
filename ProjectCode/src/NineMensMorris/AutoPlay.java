@@ -29,6 +29,9 @@ public class AutoPlay extends Player {
     }
 
     public void computersTurn() {
+        long start = System.currentTimeMillis();
+        while(start >= System.currentTimeMillis() - 2000);
+
         Game theGame = Gui.getMyGame();
         Game.GameState currentState = theGame.gameState;
 

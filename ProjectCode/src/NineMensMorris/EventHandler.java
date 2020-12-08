@@ -3,7 +3,6 @@ package NineMensMorris;
 import javafx.scene.input.MouseEvent;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -83,6 +82,7 @@ public abstract class EventHandler {
                 }
                 break;
         }
+
         if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() == 0) { (theGame.pl2).computersTurn(); }
         if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() != 0) { (theGame.pl2).removeOpponentsPiece(theGame); }
         return null;
