@@ -1,15 +1,14 @@
 package NineMensMorris;
 
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 //import javafx.scene.paint.Color;
 
@@ -29,7 +28,7 @@ public class Cell extends Pane {
             this.getWidth(), this.getHeight());
 
     public Point getMyPair() {return myPair; }
-    public HashMap<Point, Point> getCoordTable() {return coordTable; }
+    public static HashMap<Point, Point> getCoordTable() {return coordTable; }
 
     // Cell constructor checks if it is a validSpace and initializes the attributes for this cell
     public Cell(int i, int j){
@@ -492,7 +491,7 @@ public class Cell extends Pane {
     // This is called when a validSpace is clicked to handle how a piece is placed
 
     //Highlighting and Color Functions
-    public static void hightlightMills(ArrayList<Point> freePieces) {
+    public static void hightlightMills(Vector<Point> freePieces) {
         if (freePieces == null) {
             for (Map.Entry<Point, Player> pair : Gui.getMyGame().getQuickTable().entrySet()) {
                 if (!(pair.getValue() == Gui.getMyGame().getCurrentPlayer())) {

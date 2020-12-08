@@ -21,12 +21,13 @@ public class Game {
     public enum GameState {Draw, Finished, MidMove, Mill, Moving, Placing}
 
     public GameState gameState = GameState.Placing;
-    public Player pl1, pl2;
+    public Player pl1;
+    public AutoPlay pl2;
     protected Player currentPlayer;
     protected int currentMills = 0;
     protected boolean midMove = false;
     protected Cell lastCell = null;
-    protected ArrayList<Point> freePieces = null;
+    protected Vector<Point> freePieces = null;
     protected boolean singlePlayer;
 
 
@@ -56,7 +57,7 @@ public class Game {
         return lastCell;
     }
 
-    public ArrayList<Point> getFreePieces() {
+    public Vector<Point> getFreePieces() {
         return freePieces;
     }
 
@@ -110,11 +111,11 @@ public class Game {
 
         //Could use Dialog Box to get player names from users
         players.add(pl1 = new Player("Red"));
+
         if (isSinglePlayer()) {
-            //pl2 = (AutoPlay) pl2;
             players.add(pl2 = new AutoPlay("BlueBot"));
         } else {
-            players.add(pl2 = new Player("Blue"));
+            players.add(pl2 = new AutoPlay("Blue"));
         }
         currentPlayer = pl1;
     }
@@ -181,7 +182,7 @@ public class Game {
     //Instantiates the freePieces Array and populates it with a players 'free' (unmilled) pieces,
     // or sets it to null if all pieces are in mills
     private void checkForUnmilledPieces(Player player) {
-        freePieces = new ArrayList<Point>();
+        freePieces = new Vector<Point>();
         for (Map.Entry<Point, Player> pair : getQuickTable().entrySet()) {
             if (pair.getValue().equals(player)) {
                 if (!isInMill(pair.getKey(), false)) {

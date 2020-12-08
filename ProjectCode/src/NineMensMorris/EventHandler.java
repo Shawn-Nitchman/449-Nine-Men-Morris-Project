@@ -5,6 +5,7 @@ import javafx.scene.input.MouseEvent;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 
 public abstract class EventHandler {
@@ -20,25 +21,7 @@ public abstract class EventHandler {
 
         switch (theGame.gameState) {
             case Mill: //Try to Remove piece at this location
-                //If there is a piece on this cell AND it is of the other player
-                if (qTable.get(clickedPair) != null && qTable.get(clickedPair) != currentPlayer) {
-
-                    //Local variable for freePieces Array
-                    ArrayList<Point> freePieces = theGame.getFreePieces();
-
-                    //If freePieces equals null, all opponents pieces are in mills, any piece can be taken
-                    //If the piece clicked is in the freePieces Array, is it not in a mill, and can be taken
-                    if (freePieces == null) {
-                        Cell.removeVisualPiece(cell);
-                        Move.removePiece(clickedPair);
-                        Cell.undoHighlights();
-                    } else if (freePieces.contains(clickedPair)) {
-                        Cell.removeVisualPiece(cell);
-                        Move.removePiece(clickedPair);
-                        Cell.undoHighlights();
-                    }
-
-                }
+                millFunction(cell, theGame);
                 break;
             case MidMove: //Try to Move lastPiece to new Location
                 if (Move.changeLocation(currentPlayer, theGame.getLastCell().getMyPair(), clickedPair)) {
@@ -62,16 +45,11 @@ public abstract class EventHandler {
                     Cell.undoHighlights();
                 }
                 break;
-            case Placing: //Place piece on board
-                if (Move.changeLocation(currentPlayer, Game.IN_BAG, clickedPair)) {
 
-                    //Tell GUI to place visual piece
-                    cell.colorVisualPiece(currentPlayer);
-                    if (theGame.unresolvedMills()) {
-                        Cell.hightlightMills(theGame.getFreePieces());
-                    }
-                }
+            case Placing: //Place piece on board
+                placingFunction(cell, theGame);
                 break;
+
             case Moving: //Capture first click, change myGame.midMove to true
                 //If a cell that was clicked has a piece on it of the current player...
                 if (qTable.get(clickedPair) != null && qTable.get(clickedPair).equals(currentPlayer)) {
@@ -105,8 +83,50 @@ public abstract class EventHandler {
                 }
                 break;
         }
-        if (theGame.singlePlayer) { ((AutoPlay) theGame.pl2).computersTurn(); }
+        if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() == 0) { (theGame.pl2).computersTurn(); }
+        if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() != 0) { (theGame.pl2).removeOpponentsPiece(theGame); }
         return null;
+    }
+
+    public static boolean placingFunction(Cell cell, Game game) {
+        Player currentPlayer = game.getCurrentPlayer();
+
+        if (Move.changeLocation(currentPlayer, Game.IN_BAG, cell.getMyPair())) {
+
+            //Tell GUI to place visual piece
+            cell.colorVisualPiece(currentPlayer);
+            if (theGame.unresolvedMills()) {
+                Cell.hightlightMills(theGame.getFreePieces());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean millFunction(Cell cell, Game theGame) {
+        HashMap<Point, Player> qTable = theGame.getQuickTable();
+        Point pair = cell.getMyPair();
+
+        //If there is a piece on this cell AND it is of the other player
+        if (qTable.get(pair) != null && qTable.get(pair) != theGame.getCurrentPlayer()) {
+
+            //Local variable for freePieces Array
+            Vector<Point> freePieces = theGame.getFreePieces();
+
+            //If freePieces equals null, all opponents pieces are in mills, any piece can be taken
+            //If the piece clicked is in the freePieces Array, is it not in a mill, and can be taken
+            if (freePieces == null) {
+                Cell.removeVisualPiece(cell);
+                Move.removePiece(pair);
+                Cell.undoHighlights();
+            } else if (freePieces.contains(pair)) {
+                Cell.removeVisualPiece(cell);
+                Move.removePiece(pair);
+                Cell.undoHighlights();
+            }
+            return true;
+        }
+        return false;
     }
 }
 
