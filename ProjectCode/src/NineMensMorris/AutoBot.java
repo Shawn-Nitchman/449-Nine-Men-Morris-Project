@@ -50,7 +50,7 @@ public class AutoBot extends Player {
 
     public void computersTurn() {
         long start = System.currentTimeMillis();
-        while(start >= System.currentTimeMillis() - 500);
+        while (start >= System.currentTimeMillis() - 500) ;
 
         Game theGame = Gui.getMyGame();
         Game.GameState currentState = theGame.gameState;
@@ -133,7 +133,7 @@ public class AutoBot extends Player {
     public boolean botMoving(Game theGame) {
 
         Vector<Point> botNearMillSpaces = nearMillFinder(theGame, this, false);
-        Vector<Point> botPiecesInNearMills = nearMillFinder(theGame,this, true);
+        Vector<Point> botPiecesInNearMills = nearMillFinder(theGame, this, true);
         Vector<Point> movePoints = new Vector<>();
         Vector<Point> possibleMoves = new Vector<>();
         Point moveFromPair;
@@ -142,32 +142,45 @@ public class AutoBot extends Player {
             movePoints.add(piece.getPair());
         }
 
-        if (botNearMillSpaces.size() > 0) {
+        if (botNearMillSpaces.size() > 0) { //I might be able to make a mill
             for (Piece piece : this.getPieces()) {
                 Point oldPair = piece.getPair();
+                Point newPair = null;
 
-                if (!botPiecesInNearMills.contains(oldPair)) {
+                if (!botPiecesInNearMills.contains(oldPair)) { //Don't move a piece out of a Near Mill
                     if (isFlying()) {
-                        Point newPair = randomPointInVector(botNearMillSpaces);
+                        //FIXME: This might not work right
+                        newPair = botNearMillSpaces.get(0);
+                    } else { //Not flying
+                        for (Point checkPair : Move.getMoveTable().get(oldPair)) { //For each place I could move current piece
+                            if (Move.isOpen(checkPair)) { //If the place is open
+                                newPair = checkPair;
+                            }
+                        }
                     }
-                }
-            }
-        }
-
-
-
-
-        if (this.isFlying()) {
-
-
-
-
+                    if (newPair != null && botNearMillSpaces.contains(newPair) && !botPiecesInNearMills.contains(oldPair)) {
                         Move.changeLocation(this, oldPair, newPair);
                         Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
                         Cell.pairToCell.get(newPair).colorVisualPiece(this);
                         Cell.undoHighlights();
                         return true;
                     }
+                }
+            }
+        } else { //Try to Block opps nearMill
+
+        }
+        return false;
+    }
+
+
+
+
+/*
+
+        if (this.isFlying()) {
+               }
+
                 }
             } else { //If i can't make a mill, try to block opps mills by flying
 
@@ -203,16 +216,9 @@ public class AutoBot extends Player {
             }
         } else { //Not Flying
 
-                    for (Point newPair : Move.getMoveTable().get(oldPair)) { //For each place I could move a piece
-                        if (Move.isOpen(newPair)) { //If the place is open
+
                             //If the potential open space would make a mill AND the piece we are moving in isn't already to be part of a mill
-                            if (botNearMillSpaces.contains(newPair) && !botPiecesInNearMills.contains(oldPair)) {
-                                Move.changeLocation(this, oldPair, newPair);
-                                Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
-                                Cell.pairToCell.get(newPair).colorVisualPiece(this);
-                                Cell.undoHighlights();
-                                return true;
-                            }
+
                         }
                     }
                 }
@@ -243,7 +249,7 @@ public class AutoBot extends Player {
         }
         return true;
     }
-
+*/
     //ATTEMPT AT AI
 
     public Vector<Point> nearMillFinder(Game theGame, Player player, boolean getPieces) {
