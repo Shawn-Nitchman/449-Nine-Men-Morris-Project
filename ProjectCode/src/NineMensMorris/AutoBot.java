@@ -1,12 +1,10 @@
 package NineMensMorris;
 
-import javafx.event.Event;
-
 import java.awt.*;
 import java.util.*;
 
 public class AutoBot extends Player {
-    private static Vector<ArrayList<Point>> millTable = new Vector<ArrayList<Point>>();
+    private static final Vector<ArrayList<Point>> millTable = new Vector<>();
 
     AutoBot(String player) {
         super(player);
@@ -14,26 +12,26 @@ public class AutoBot extends Player {
     }
 
     private void InitMillTable() {
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,0), new Point(0,1), new Point(0,2))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(1,0), new Point(1,1), new Point(1,2))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(2,0), new Point(2,1), new Point(2,2))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 0), new Point(0, 1), new Point(0, 2))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(1, 0), new Point(1, 1), new Point(1, 2))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(2, 0), new Point(2, 1), new Point(2, 2))));
 
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,2), new Point(0,3), new Point(0,4))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(1,2), new Point(1,3), new Point(1,4))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(2,2), new Point(2,3), new Point(2,4))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 2), new Point(0, 3), new Point(0, 4))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(1, 2), new Point(1, 3), new Point(1, 4))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(2, 2), new Point(2, 3), new Point(2, 4))));
 
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,4), new Point(0,5), new Point(0,6))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(1,4), new Point(1,5), new Point(1,6))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(2,4), new Point(2,5), new Point(2,6))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 4), new Point(0, 5), new Point(0, 6))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(1, 4), new Point(1, 5), new Point(1, 6))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(2, 4), new Point(2, 5), new Point(2, 6))));
 
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,6), new Point(0,7), new Point(0,0))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(1,6), new Point(1,7), new Point(1,0))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(2,6), new Point(2,7), new Point(2,0))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 6), new Point(0, 7), new Point(0, 0))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(1, 6), new Point(1, 7), new Point(1, 0))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(2, 6), new Point(2, 7), new Point(2, 0))));
 
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,1), new Point(1,1), new Point(2,1))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,3), new Point(1,3), new Point(2,3))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,5), new Point(1,5), new Point(2,5))));
-        millTable.add(new ArrayList<Point>(Arrays.asList(new Point(0,7), new Point(1,7), new Point(2,7))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 1), new Point(1, 1), new Point(2, 1))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 3), new Point(1, 3), new Point(2, 3))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 5), new Point(1, 5), new Point(2, 5))));
+        millTable.add(new ArrayList<>(Arrays.asList(new Point(0, 7), new Point(1, 7), new Point(2, 7))));
     }
 
     public Point randomGenerator() {
@@ -59,36 +57,36 @@ public class AutoBot extends Player {
 
         switch (currentState) {
             case Placing:
-                while (!placing(theGame)) {
+                while (!botPlacing(theGame)) {
                     continue;
                 }
                 break;
             case Mill:
-                while (!milling(theGame)) {
+                while (!botMilling(theGame)) {
                     continue;
                 }
                 break;
             case Moving:
-                while (!moving(theGame)) {
+                while (!botMoving(theGame)) {
                     continue;
                 }
                 break;
         }
     }
 
-    public boolean placing(Game theGame) {
-        Vector<Point> myPossibleMills = canMakeMill(theGame, this, false);
-        Vector<Point> opsPossibleMills;
+    public boolean botPlacing(Game theGame) {
+        Vector<Point> botNearMillSpaces = nearMillFinder(theGame, this, false);
+        Vector<Point> playerNearMills;
 
         Point placingPoint;
 
-        if (!myPossibleMills.isEmpty()) {
-            placingPoint = randomPointInVector(myPossibleMills);
+        if (!botNearMillSpaces.isEmpty()) {
+            placingPoint = randomPointInVector(botNearMillSpaces);
 
         } else { //is empty
-            opsPossibleMills = canMakeMill(theGame, theGame.pl1, false);
-            if (!opsPossibleMills.isEmpty()) {
-                placingPoint = randomPointInVector(opsPossibleMills);
+            playerNearMills = nearMillFinder(theGame, theGame.pl1, false);
+            if (!playerNearMills.isEmpty()) {
+                placingPoint = randomPointInVector(playerNearMills);
             } else {
                 placingPoint = new Point(randomGenerator());
             }
@@ -96,11 +94,11 @@ public class AutoBot extends Player {
         return EventHandler.placingFunction(Cell.pairToCell.get(placingPoint), theGame);
     }
 
-    public boolean milling(Game theGame) {
+    public boolean botMilling(Game theGame) {
         Vector<Point> freePieces = theGame.getFreePieces();
 
         if (freePieces == null) {
-            Vector<Point> opsPoints = new Vector<Point>();
+            Vector<Point> opsPoints = new Vector<>();
             for (Piece piece : theGame.pl1.getPieces()) {
                 opsPoints.add(piece.getPair());
             }
@@ -114,44 +112,56 @@ public class AutoBot extends Player {
     }
 
     private void removeOpponentsPiece(Vector<Point> removablePairs, Game theGame) {
-        Vector<Point> opsPossibleMills = canMakeMill(theGame, theGame.pl1, true);
-        Vector<Point> screenedOpsPossibleMills = new Vector<Point>();
+        Vector<Point> playerNearMills = nearMillFinder(theGame, theGame.pl1, true);
+        Vector<Point> screenedPlayerNearMills = new Vector<>();
         Point pairToRemove;
 
-        if (!opsPossibleMills.isEmpty()) {
-            for (Point pair : opsPossibleMills) {
+        if (!playerNearMills.isEmpty()) {
+            for (Point pair : playerNearMills) {
                 if (removablePairs.contains(pair)) {
-                    screenedOpsPossibleMills.add(pair);
+                    screenedPlayerNearMills.add(pair);
                 }
             }
-            pairToRemove = randomPointInVector(screenedOpsPossibleMills);
+            pairToRemove = randomPointInVector(screenedPlayerNearMills);
         } else {
             pairToRemove = randomPointInVector(removablePairs);
         }
 
-        EventHandler.millFunction(Cell.pairToCell.get(pairToRemove), theGame);
+        EventHandler.millingFunction(Cell.pairToCell.get(pairToRemove), theGame);
     }
 
-    public boolean moving(Game theGame) {
+    public boolean botMoving(Game theGame) {
 
-        Vector<Point> movePoints = new Vector<Point>();
-        Vector<Point> possibleMoves = new Vector<Point>();
+        Vector<Point> botNearMillSpaces = nearMillFinder(theGame, this, false);
+        Vector<Point> botPiecesInNearMills = nearMillFinder(theGame,this, true);
+        Vector<Point> movePoints = new Vector<>();
+        Vector<Point> possibleMoves = new Vector<>();
         Point moveFromPair;
 
         for (Piece piece : theGame.pl2.getPieces()) {
             movePoints.add(piece.getPair());
         }
 
+        if (botNearMillSpaces.size() > 0) {
+            for (Piece piece : this.getPieces()) {
+                Point oldPair = piece.getPair();
+
+                if (!botPiecesInNearMills.contains(oldPair)) {
+                    if (isFlying()) {
+                        Point newPair = randomPointInVector(botNearMillSpaces);
+                    }
+                }
+            }
+        }
+
+
+
+
         if (this.isFlying()) {
-            Vector<Point> myPossibleMills = canMakeMill(theGame, this, false);
-            Vector<Point> piecesInMills = canMakeMill(theGame,this, true);
 
-            if (!myPossibleMills.isEmpty()) {
-                for (Piece piece : this.getPieces()) {
-                    Point oldPair = piece.getPair();
 
-                    if (!piecesInMills.contains(oldPair)) {
-                        Point newPair = randomPointInVector(myPossibleMills);
+
+
                         Move.changeLocation(this, oldPair, newPair);
                         Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
                         Cell.pairToCell.get(newPair).colorVisualPiece(this);
@@ -161,16 +171,16 @@ public class AutoBot extends Player {
                 }
             } else { //If i can't make a mill, try to block opps mills by flying
 
-                Vector<Point> opsPossibleMills = canMakeMill(theGame, theGame.pl1, false);
+                Vector<Point> playerNearMills = nearMillFinder(theGame, theGame.pl1, false);
                 Point placingPoint;
-                if (!opsPossibleMills.isEmpty()) {
-                    placingPoint = randomPointInVector(opsPossibleMills);
+                if (!playerNearMills.isEmpty()) {
+                    placingPoint = randomPointInVector(playerNearMills);
                 } else {
                     placingPoint = new Point(randomGenerator());
                 }
                 for (Piece piece : this.getPieces()) {
-                    if (!piecesInMills.isEmpty()) {
-                        for (Point pair : piecesInMills) {
+                    if (!botPiecesInNearMills.isEmpty()) {
+                        for (Point pair : botPiecesInNearMills) {
                             if (piece.getPair() != pair) {
                                 Point oldPair = piece.getPair();
                                 Move.changeLocation(this, oldPair, placingPoint);
@@ -192,18 +202,11 @@ public class AutoBot extends Player {
                 }
             }
         } else { //Not Flying
-            Vector<Point> possibleMills = canMakeMill(theGame, this, false);
-
-            if (!possibleMills.isEmpty()) {//If I have potential mills
-                //Grab points of pieces almost in a mill
-                Vector<Point> piecesInMills = canMakeMill(theGame,this, true);
-                for (Piece piece : this.getPieces()) { //For each of my piece
-                    Point oldPair = piece.getPair();
 
                     for (Point newPair : Move.getMoveTable().get(oldPair)) { //For each place I could move a piece
                         if (Move.isOpen(newPair)) { //If the place is open
                             //If the potential open space would make a mill AND the piece we are moving in isn't already to be part of a mill
-                            if (possibleMills.contains(newPair) && !piecesInMills.contains(oldPair)) {
+                            if (botNearMillSpaces.contains(newPair) && !botPiecesInNearMills.contains(oldPair)) {
                                 Move.changeLocation(this, oldPair, newPair);
                                 Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
                                 Cell.pairToCell.get(newPair).colorVisualPiece(this);
@@ -243,8 +246,8 @@ public class AutoBot extends Player {
 
     //ATTEMPT AT AI
 
-    public Vector<Point> canMakeMill(Game theGame, Player player, boolean toRemove) {
-        Vector<Point> possibleMills = new Vector<Point>();
+    public Vector<Point> nearMillFinder(Game theGame, Player player, boolean getPieces) {
+        Vector<Point> possibleMills = new Vector<>();
         HashMap<Point, Player> qTable = theGame.getQuickTable();
 
         for (ArrayList<Point> millPoints : millTable) {
@@ -253,7 +256,7 @@ public class AutoBot extends Player {
                     && qTable.containsKey(millPoints.get(1)) && qTable.get(millPoints.get(1)).equals(player)
                     && Move.isOpen(millPoints.get(2))) {
 
-                if (toRemove) {
+                if (getPieces) {
                     possibleMills.add(millPoints.get(1));
                     possibleMills.add(millPoints.get(0));
                 } else {
@@ -264,7 +267,7 @@ public class AutoBot extends Player {
                     && Move.isOpen(millPoints.get(1))
                     && qTable.containsKey(millPoints.get(2)) && qTable.get(millPoints.get(2)).equals(player)) {
 
-                if (toRemove) {
+                if (getPieces) {
                     possibleMills.add(millPoints.get(0));
                     possibleMills.add(millPoints.get(2));
                 } else {
@@ -275,7 +278,7 @@ public class AutoBot extends Player {
                     qTable.containsKey(millPoints.get(1)) && qTable.get(millPoints.get(1)).equals(player)
                     && qTable.containsKey(millPoints.get(2)) && qTable.get(millPoints.get(2)).equals(player)) {
 
-                if (toRemove) {
+                if (getPieces) {
                     possibleMills.add(millPoints.get(1));
                     possibleMills.add(millPoints.get(2));
                 } else {

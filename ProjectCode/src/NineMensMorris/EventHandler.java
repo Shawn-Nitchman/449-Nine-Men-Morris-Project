@@ -20,7 +20,7 @@ public abstract class EventHandler {
 
         switch (theGame.gameState) {
             case Mill: //Try to Remove piece at this location
-                millFunction(cell, theGame);
+                millingFunction(cell, theGame);
                 break;
             case MidMove: //Try to Move lastPiece to new Location
                 if (Move.changeLocation(currentPlayer, theGame.getLastCell().getMyPair(), clickedPair)) {
@@ -84,7 +84,7 @@ public abstract class EventHandler {
         }
 
         if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() == 0) { (theGame.pl2).computersTurn(); }
-        if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() != 0) { (theGame.pl2).milling(theGame); }
+        if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() != 0) { (theGame.pl2).botMilling(theGame); }
         return null;
     }
 
@@ -103,7 +103,7 @@ public abstract class EventHandler {
         return false;
     }
 
-    public static boolean millFunction(Cell cell, Game theGame) {
+    public static boolean millingFunction(Cell cell, Game theGame) {
         HashMap<Point, Player> qTable = theGame.getQuickTable();
         Point pair = cell.getMyPair();
 
