@@ -13,6 +13,10 @@ class GameTest extends Game {
     Gui theGui;
     Game theGame;
 
+    public GameTest() {
+        super(false);
+    }
+
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {

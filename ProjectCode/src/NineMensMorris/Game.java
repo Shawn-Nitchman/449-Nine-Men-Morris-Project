@@ -99,7 +99,8 @@ public class Game {
     }
 
     //Constructor
-    public Game() {
+    public Game(boolean singlePlayer) {
+        setSinglePlayer(singlePlayer);
         InitPlayers();
         Move.linkUp(this); //Gives the Move module a static reference to this instance
     }

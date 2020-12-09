@@ -25,7 +25,7 @@ public class Gui extends Application{
     private Scene gamePage;
     private Scene menuPage;
     private Scene instructionsPage;
-    private static Game myGame = new Game();
+    private static Game myGame;
     private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
     public static Text statusText = new Text("");
@@ -53,7 +53,8 @@ public class Gui extends Application{
 
     private void goToGamePage(RadioButton singlePlayer){
         window.setScene(gamePage);
-        myGame.setSinglePlayer(singlePlayer.isSelected());
+        myGame = new Game(singlePlayer.isSelected());
+        myGame.updateGuiStatus();
         //System.out.print("Single player game:" + myGame.isSinglePlayer());
     }
 
@@ -112,7 +113,6 @@ public class Gui extends Application{
         border.setCenter(gridpane);
         border.setRight(player2);
         gamePage = new Scene(border, 850, 650);
-        myGame.updateGuiStatus();
     }
 
 

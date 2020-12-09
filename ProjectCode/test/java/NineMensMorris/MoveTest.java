@@ -13,7 +13,7 @@ class MoveTest {
         @org.junit.jupiter.api.BeforeEach
         void setUp() {
             theGui = new Gui();
-            theGame = new Game();
+            theGame = new Game(false);
         }
 
         @org.junit.jupiter.api.AfterEach

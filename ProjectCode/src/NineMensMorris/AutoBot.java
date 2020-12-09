@@ -1,5 +1,7 @@
 package NineMensMorris;
 
+import javafx.event.Event;
+
 import java.awt.*;
 import java.util.*;
 
@@ -49,8 +51,8 @@ public class AutoBot extends Player {
     }
 
     public void computersTurn() {
-        //long start = System.currentTimeMillis();
-        //while(start >= System.currentTimeMillis() - 1000);
+        long start = System.currentTimeMillis();
+        while(start >= System.currentTimeMillis() - 500);
 
         Game theGame = Gui.getMyGame();
         Game.GameState currentState = theGame.gameState;
@@ -139,17 +141,82 @@ public class AutoBot extends Player {
         for (Piece piece : theGame.pl2.getPieces()) {
             movePoints.add(piece.getPair());
         }
+
         if (this.isFlying()) {
+            Vector<Point> myPossibleMills = canMakeMill(theGame, this, false);
+            Vector<Point> piecesInMills = canMakeMill(theGame,this, true);
+
+            if (!myPossibleMills.isEmpty()) {
+                for (Piece piece : this.getPieces()) {
+                    Point oldPair = piece.getPair();
+
+                    if (!piecesInMills.contains(oldPair)) {
+                        Point newPair = randomPointInVector(myPossibleMills);
+                        Move.changeLocation(this, oldPair, newPair);
+                        Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
+                        Cell.pairToCell.get(newPair).colorVisualPiece(this);
+                        Cell.undoHighlights();
+                        return true;
+                    }
+                }
+            } else { //If i can't make a mill, try to block opps mills by flying
+
+                Vector<Point> opsPossibleMills = canMakeMill(theGame, theGame.pl1, false);
+                Point placingPoint;
+                if (!opsPossibleMills.isEmpty()) {
+                    placingPoint = randomPointInVector(opsPossibleMills);
+                } else {
+                    placingPoint = new Point(randomGenerator());
+                }
+                for (Piece piece : this.getPieces()) {
+                    if (!piecesInMills.isEmpty()) {
+                        for (Point pair : piecesInMills) {
+                            if (piece.getPair() != pair) {
+                                Point oldPair = piece.getPair();
+                                Move.changeLocation(this, oldPair, placingPoint);
+                                Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
+                                Cell.pairToCell.get(placingPoint).colorVisualPiece(this);
+                                Cell.undoHighlights();
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+
             moveFromPair = randomPointInVector(movePoints);
             for (Point pair : Cell.getCoordTable().values()) {
                 if (Move.isOpen(pair)) {
                     possibleMoves.add(pair);
                 }
             }
-        } else {
-            do {
+        } else { //Not Flying
+            Vector<Point> possibleMills = canMakeMill(theGame, this, false);
+
+            if (!possibleMills.isEmpty()) {//If I have potential mills
+                //Grab points of pieces almost in a mill
+                Vector<Point> piecesInMills = canMakeMill(theGame,this, true);
+                for (Piece piece : this.getPieces()) { //For each of my piece
+                    Point oldPair = piece.getPair();
+
+                    for (Point newPair : Move.getMoveTable().get(oldPair)) { //For each place I could move a piece
+                        if (Move.isOpen(newPair)) { //If the place is open
+                            //If the potential open space would make a mill AND the piece we are moving in isn't already to be part of a mill
+                            if (possibleMills.contains(newPair) && !piecesInMills.contains(oldPair)) {
+                                Move.changeLocation(this, oldPair, newPair);
+                                Cell.removeVisualPiece(Cell.pairToCell.get(oldPair));
+                                Cell.pairToCell.get(newPair).colorVisualPiece(this);
+                                Cell.undoHighlights();
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            do { //If there are no possible mills to make, choose randomly
                 moveFromPair = randomPointInVector(movePoints);
-                //System.out.println("Trying :" + moveFromPair);
                 for (Point checkPair : Move.getMoveTable().get(moveFromPair)) {
                     if (Move.isOpen(checkPair)) {
                         possibleMoves.add(checkPair);
