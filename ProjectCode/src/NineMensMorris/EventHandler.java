@@ -84,7 +84,7 @@ public abstract class EventHandler {
         }
 
         if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() == 0) { (theGame.pl2).computersTurn(); }
-        if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() != 0) { (theGame.pl2).removeOpponentsPiece(theGame); }
+        if (theGame.singlePlayer && theGame.getCurrentPlayer() == theGame.pl2 && theGame.getCurrentMills() != 0) { (theGame.pl2).milling(theGame); }
         return null;
     }
 

@@ -1,7 +1,6 @@
 package NineMensMorris;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -22,7 +21,7 @@ public class Game {
 
     public GameState gameState = GameState.Placing;
     public Player pl1;
-    public AutoPlay pl2;
+    public AutoBot pl2;
     protected Player currentPlayer;
     protected int currentMills = 0;
     protected boolean midMove = false;
@@ -113,9 +112,9 @@ public class Game {
         players.add(pl1 = new Player("Red"));
 
         if (isSinglePlayer()) {
-            players.add(pl2 = new AutoPlay("BlueBot"));
+            players.add(pl2 = new AutoBot("BlueBot"));
         } else {
-            players.add(pl2 = new AutoPlay("Blue"));
+            players.add(pl2 = new AutoBot("Blue"));
         }
         currentPlayer = pl1;
     }

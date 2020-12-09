@@ -9,11 +9,11 @@ import java.awt.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AutoPlayTest {
-    AutoPlay autoBot;
+    AutoBot autoBot;
 
     @BeforeEach
     void setUp() {
-        autoBot = new AutoPlay("Decepticon");
+        autoBot = new AutoBot("Decepticon");
 
     }
 
