@@ -1,154 +1,150 @@
 package NineMensMorris;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Move {
-    private static HashMap<Point, Point> coordTable;
-    private static Game.GamePlay myGame;
+    private static HashMap<Point, ArrayList<Point>> moveTable;
+    private static final ArrayList<Point> pointArray = new ArrayList<Point>();
+    private static Game myGame;
+    private static int moveCount = 0;
 
-    public static void linkUp(Game.GamePlay myGame) {
+    public static void linkUp(Game myGame) {
         Move.myGame = myGame;
-        Move.InitCoordTable();
+        Move.initPointArray();
+        Move.InitMoveTable();
     }
 
-    public static HashMap<Point, Point> getCoordTable() { return coordTable; }
-    protected static Game.GamePlay getMyGame() { return myGame; }
+    //Getters
+    public static HashMap<Point, ArrayList<Point>> getMoveTable(){ return moveTable; }
+    public static int getMoveCount() { return moveCount; }
+    protected static Game getMyGame() { return myGame; }
 
-    private static void InitCoordTable(){
-        coordTable = new HashMap<Point, Point>();
+    //Setter
+    public static void incrementMoveCount() {moveCount++; }
 
-        coordTable.put(new Point(0, 0), new Point(2,0));
-        coordTable.put(new Point(0, 3), new Point(2,1));
-        coordTable.put(new Point(0,6), new Point(2,2));
-
-        coordTable.put(new Point(1, 1), new Point(1,0));
-        coordTable.put(new Point(1, 3), new Point(1,1));
-        coordTable.put(new Point(1, 5), new Point(1,2));
-
-        coordTable.put(new Point(2, 2), new Point(0,0));
-        coordTable.put(new Point(2, 3), new Point(0,1));
-        coordTable.put(new Point(2, 4), new Point(0,2));
-
-        coordTable.put(new Point(3, 0), new Point(2,7));
-        coordTable.put(new Point(3, 1), new Point(1,7));
-        coordTable.put(new Point(3, 2), new Point(0,7));
-        coordTable.put(new Point(3, 4), new Point(0,3));
-        coordTable.put(new Point(3, 5), new Point(1,3));
-        coordTable.put(new Point(3, 6), new Point(2,3));
-
-        coordTable.put(new Point(4, 2), new Point(0,6));
-        coordTable.put(new Point(4, 3), new Point(0,5));
-        coordTable.put(new Point(4, 4), new Point(0,4));
-
-        coordTable.put(new Point(5, 1), new Point(1,6));
-        coordTable.put(new Point(5, 3), new Point(1,5));
-        coordTable.put(new Point(5, 5), new Point(1,4));
-
-        coordTable.put(new Point(6, 0), new Point(2,6));
-        coordTable.put(new Point(6, 3), new Point(2,5));
-        coordTable.put(new Point(6, 6), new Point(2,4));
-    }
-
-    public static boolean isOpen(Point pair) {
-        for (Player player : myGame.getPlayers()) {
-            for (Piece piece : player.getPieces()) {
-                if (piece.getPair().equals(pair)) return false;
+    //Initializers
+    private static void initPointArray() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 8; j++) {
+                pointArray.add(new Point(i, j));
             }
         }
-        return true; //none found, so return true the spot isOpen
     }
 
-    //Not Sprint1.
-    protected static boolean isFlying(Player player) {
-        return player.isFlying();
-    }
+    //This table has the 24 playable places in playing coords as the keys and the places one can move from that key as values
+    //For deciding if a move is legal and if a player has no moves left
+    private static void InitMoveTable() {
+        moveTable = new HashMap<Point, ArrayList<Point>>();
 
+        for (Point pair : pointArray) {
+            int myY = pair.y;
+            int myX = pair.x;
 
-    // Move function.
-    public static boolean move (Player player, Point oldPair, Point newPair){
-
-    	if (isOpen(newPair) && isLegal(player, oldPair, newPair)) {
-    		for (Piece piece : player.getPieces()) {
-    			if (piece.getPair().equals(oldPair)) {
-    				piece.setPair(newPair); //FIXME: Is this threadsafe?
-                    System.out.println(player.getName() + " just placed at " + piece.getPair());
-    				return true;
-    			}
-    		}
-    	} else {
-    		return false;
-    	}
-
-    	return false; //error if this line of code is left out
-    }
-
-
-    //
-    protected static boolean isLegal(Player player, Point oldPair, Point newPair) {
-        if (oldPair.equals(Game.IN_BAG)) {
-            return true;
-        } else if (isFlying(player)) {
-            return true;
-        } else if (oldPair.equals(newPair)) {
-            return false;
-        } else {
-            return checkYCoord(oldPair, newPair);
+            moveTable.put(pair, new ArrayList<Point>());
+            switch (myY % 2) {
+                case 0:
+                    moveTable.get(pair).add(new Point(myX, (myY == 0) ? 7 : myY - 1));
+                    moveTable.get(pair).add(new Point(myX, myY + 1));
+                    break;
+                case 1:
+                    moveTable.get(pair).add(new Point(myX, myY - 1));
+                    moveTable.get(pair).add(new Point(myX, (myY == 7) ? 0 : myY + 1));
+                    switch (myX) {
+                        case 0:
+                        case 2:
+                            moveTable.get(pair).add(new Point(1, myY));
+                            break;
+                        case 1:
+                            moveTable.get(pair).add(new Point(0, myY));
+                            moveTable.get(pair).add(new Point(2, myY));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
+
     }
 
-    private static boolean checkYCoord(Point oldPair, Point newPair) {
-        if (oldPair.getY() == newPair.getY() && oldPair.getY() % 2 == 0) {
-            //If the Y coords are equal and even (i.e. corner spot)
-            return false;
-        } else if (oldPair.getY() == newPair.getY() && oldPair.getY() % 2 == 1) {
-            //If te Y coords are equal and odd (i.e. midpoint spot)
-            return checkXCoord(oldPair, newPair);
-        }
-        
-        switch ((int) (oldPair.getY())) {
-            case 0:
-                if ((newPair.getY() == 1 || newPair.getY() == 7)
-                        && (oldPair.getX() == newPair.getX()))
-                        { return true; }
-                else {return false;}
+    //Main Functions
+    //Pass in a point in question, returns if that space is open
+    //Uses the QuickTable
+    public static boolean isOpen(Point pair) {
 
-            case 2: case 4: case 6:
-                if (((newPair.getY() == oldPair.getY() - 1) || newPair.getY() == oldPair.getY() + 1)
-                        && (oldPair.getX() == newPair.getX()))
-                        { return true; }
-                else {return false;}
+        return !myGame.getQuickTable().containsKey(pair);//none found, so return true the spot isOpen
+    }
 
-            case 1: case 3: case 5:
-                if (((newPair.getY() == oldPair.getY() - 1) || newPair.getY() == oldPair.getY() + 1)
-                        && (checkXCoord(oldPair, newPair)))
-                { return true; }
-                else {return false;}
+    //Pass in a piece and a location to see if the piece is allowed to try to move from it's current location
+    protected static boolean isLegal(Piece piece, Point newPair) {
+        boolean fromInBag = piece.getPair().equals(Game.IN_BAG);
+        boolean isFlying = piece.getMyPlayer().isFlying();
 
-            case 7:
-                if ((newPair.getY() == 6 || newPair.getY() == 0)
-                        && (checkXCoord(oldPair, newPair)))
-                { return true; }
-                else {return false;}
+        return  fromInBag || isFlying || moveTable.get(piece.getPair()).contains(newPair);
+    }
 
-            default:
-                break;
+    //Moving function
+    //WARNING: Modifies piece vector
+    public static boolean changeLocation(Player player, Point oldPair, Point newPair) {
+        Piece thePiece = findPiece(player, oldPair);
+
+        if (thePiece != null && isOpen(newPair) && isLegal(thePiece, newPair)) {
+            thePiece.setPair(newPair);
+            incrementMoveCount();
+            if (myGame.isMidMove()) {
+                myGame.setMidMove(false);
+            }
+            myGame.drawQuickTable();
+            myGame.isInMill(newPair, true);
+
+            //If no mills were just made, it is ok to switch turn
+            if (myGame.getCurrentMills() == 0) {
+                myGame.switchTurn();
+            }
+            myGame.updateGameState();
+            //System.out.println(player.getName() + " just placed at " + thePiece.getPair());
+            return true;
         }
         return false;
     }
 
-    private static boolean checkXCoord(Point oldPair, Point newPair) {
-        switch ((int) oldPair.getX()) {
-            case 0: case 2:
-                if (newPair.getX() == 1 || newPair.getX() == oldPair.getX()) { return true; }
-                else { return false; }
-            case 1:
-                if (newPair.getX() == 0 || newPair.getX() == 2 || newPair.getX() == oldPair.getX()) { return true; }
-                else { return false; }
-            default:
-                return false;
+    //WARNING: Modifies piece vector
+    public static boolean removePiece(Point pair) {
+        Piece thePiece = findPiece(null, pair);
+
+        if (thePiece != null && thePiece.getMyPlayer().getPieces().remove(thePiece)) {
+            myGame.decrementMill();
+            myGame.drawQuickTable();
+            if (myGame.getCurrentMills() == 0) { myGame.switchTurn(); }
+
+            myGame.updateGameState();
+            return true;
         }
+        return false;
     }
 
-    private static boolean testEven(Point oldPair) { return true; } //FIXME: Declaration needs Definition?
+    //Pass in a player/null and a pair, returns a piece if one is located at the location of pair, or null if not
+    //Helper Function for removePiece and Move
+    private static Piece findPiece(Player player, Point pair) {
+        if (player != null) {
+            for (Piece piece : player.getPieces()) {
+                if (piece.getPair().equals(pair)) {
+                    return piece;
+                }
+            }
+        } else {
+            for (Player players : myGame.getPlayers()) {
+                for (Piece piece : players.getPieces()) {
+                    if (piece.getPair().equals(pair)) {
+                        return piece;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

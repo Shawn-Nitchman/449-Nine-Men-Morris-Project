@@ -1,4 +1,5 @@
 package NineMensMorris;
+import java.awt.*;
 import java.util.Vector;
 
 public class Player {
@@ -7,46 +8,37 @@ public class Player {
     private Vector<Piece> pieces;
 
     //Constructors
-    Player() {
-        InitPieces();
-        this.name = null;
-    }
-
     Player(String player) {
-        this();
+        InitPieces();
         this.name = player;
     }
 
     //Getters
     public Vector<Piece> getPieces() { return this.pieces; }
+    public Piece getPiece(Point pair) {return findPiece(pair); }
+
+    private Piece findPiece(Point pair) {
+        for (Piece piece : this.pieces) {
+            if (piece.getPair().equals(pair)) {
+                return piece;
+            }
+        }
+        return null;
+    }
+
     public String getName() { return this.name; }
-    public boolean isPlacing() { return this.hasInBag(); }
-    public boolean hasTwoPieces() {return (this.pieces.size() == 2); }
+    public boolean hasTwoPieces() {return (this.pieces.size() <= 2); }
     public boolean isFlying() { return (this.pieces.size() == 3); }
 
-    //Setter
+    //Setter for testing
     public void setPieces(Vector<Piece> newPieces) { this.pieces = newPieces; }
 
     //Initializer
     private void InitPieces(){
         pieces = new Vector<>();
         for (int i = 0; i < Game.START_COUNT; i++) {
-            pieces.add(new Piece());
+            pieces.add(new Piece(Game.IN_BAG, this));
         }
     }
-
-    //Helper Functions
-    private boolean hasInBag() {
-        for (Piece piece : this.getPieces()){
-            if (piece.getPair().equals(Game.IN_BAG)){
-                return true; //Player still has at least one unplaced piece
-            }
-        }
-            return false; //Player does not have unplaced pieces
-    }
-    
-
-
-
 }
 

@@ -1,58 +1,120 @@
 package NineMensMorris;
-    
-import java.awt.Point;
-import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.*;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 
 /// All Structure extended from Application are static. That was why we could not use the non-static methods.
 public class Gui extends Application{
-	private static Game.GamePlay myGame = new Game.GamePlay();
-
-    private static String currentPlayer = "R";
-    private Cell[][] cell = new Cell[7][7];
+    private Stage window;
+    private Scene gamePage;
+    private Scene menuPage;
+    private Scene instructionsPage;
+    private static Game myGame;
+    private final Cell[][] cell = new Cell[7][7];
     public static VBox player1, player2;
+    public static Text statusText = new Text("");
 
+    //Getter
+    public static Game getMyGame() { return myGame; }
 
-
-    public static String getCurrentPlayer() { return currentPlayer; }
-    public static Game.GamePlay getMyGame() { return myGame; }
-
-    public static void setCurrentPlayer(String p) { currentPlayer = p; }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        window = primaryStage;
+        window.setTitle("9 Men's Morris");
 
-        // In progress on making it change color each time.
-        primaryStage.setTitle("9 Men Morris");
+        initializeMenu();
+        initializeInstructionsPage();
+        initializeGamePage();
+        goToMenu();
+    }
 
-        //Layout initialization
+    // sets the window scene to menuPage
+    private void goToMenu(){
+        window.setScene(menuPage);
+        window.show();
+    }
+
+    private void goToGamePage(RadioButton singlePlayer){
+        window.setScene(gamePage);
+        myGame = new Game(singlePlayer.isSelected());
+        myGame.updateGuiStatus();
+        //System.out.print("Single player game:" + myGame.isSinglePlayer());
+    }
+
+    // this creates all the components on the menuPage
+    private void initializeMenu(){
+        VBox menuLayout = new VBox(20);
+        menuLayout.setSpacing(10);
+        menuLayout.setPadding(new Insets(0, 20, 10, 20));
+        menuLayout.setAlignment(Pos.CENTER);
+
+        ToggleGroup numberOfPlayers = new ToggleGroup();
+        RadioButton singlePlayer = new RadioButton("Single Player");
+        RadioButton twoPlayer = new RadioButton("Two Players");
+        singlePlayer.setToggleGroup(numberOfPlayers);
+        twoPlayer.setToggleGroup(numberOfPlayers);
+        twoPlayer.setSelected(true);
+
+        Label menuDesc = new Label("Welcome to 9 Men Morris");
+        Button startGame = new Button("Start Game");
+        startGame.setOnMouseClicked(e -> goToGamePage(singlePlayer));
+        Button instructions = new Button("How to play");
+        instructions.setOnMouseClicked(e -> window.setScene(instructionsPage));
+
+        menuLayout.getChildren().addAll(menuDesc, singlePlayer, twoPlayer, startGame, instructions);
+        menuPage = new Scene(menuLayout, 500, 500);
+    }
+
+    private void initializeInstructionsPage(){
+        String instructions = "How to play 9 Men Morris:\n" +
+                "Place pieces\n" +
+                "Make mills\n" +
+                "Remove the other player's pieces\n" +
+                "Move your pieces\n";
+        Label instructionsDesc = new Label(instructions);
+        VBox pageLayout = new VBox(20);
+        pageLayout.setAlignment(Pos.CENTER);
+        pageLayout.setSpacing(10);
+        Button menuReturn = new Button("Return to Menu");
+        menuReturn.setOnMouseClicked(e -> window.setScene(menuPage));
+        pageLayout.getChildren().addAll(instructionsDesc, menuReturn);
+        instructionsPage = new Scene(pageLayout, 500, 500);
+    }
+
+    private void initializeGamePage(){
+        //Layout initialization for game
         BorderPane border = new BorderPane();
         player1 = addVBox("Player1", 9);
         player2 = addVBox("Player2", 9);
+        statusText.setFont(Font.font("Arial", 36));
+        BorderPane.setAlignment(statusText, Pos.TOP_CENTER);
+
         GridPane gridpane = addGridPane();
 
+        border.setTop(statusText);
         border.setLeft(player1);
         border.setCenter(gridpane);
         border.setRight(player2);
-
-        Scene scene = new Scene(border, 850, 650);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
+        gamePage = new Scene(border, 850, 650);
     }
+
 
     // Add to draw/visual class
     public VBox addVBox(String name, int num) {
@@ -66,31 +128,38 @@ public class Gui extends Application{
         vbox.getChildren().add(title);
 
         for (int i = 1; i <= num; i++){
+            Ellipse ellipse = new Ellipse(20,20,20,20);
+            ellipse.setStroke(Color.BLACK);
+
            if(name.equals("Player1")){
-               Ellipse ellipse = new Ellipse(20,20,20,20);
-               ellipse.setStroke(Color.BLACK);
-               ellipse.setFill(Color.RED);
-               vbox.getChildren().add(ellipse);
-           }else{
-               Ellipse ellipse = new Ellipse(20,20,20,20);
-               ellipse.setStroke(Color.BLACK);
-               ellipse.setFill(Color.BLUE);
-               vbox.getChildren().add(ellipse);
+               ellipse.setFill(Style.darkRed);
            }
+           else {
+               ellipse.setStroke(Color.BLACK);
+               ellipse.setFill(Style.darkBlue);
+           }
+
+            vbox.getChildren().add(ellipse);
         }
         return vbox;
     }
 
-    //Method to remove displayed pieces on each player's size one the piece is placed.
-    public static void removeVBoxElement(String id) {
 
-        if (id == "R") {
-            ///Some how index zero is the actualy player's name "Player1/Player2" Please solve this.
-            player1.getChildren().remove(1);
-        }
-        if (id == "B") {
-            player2.getChildren().remove(1);
-        }
+    public static void changeStatus(String status){
+        statusText.setText(status);
+    }
+
+    //Method to remove displayed pieces on each player's size one the piece is placed.
+    public static void removeVBoxElement(VBox playerBox) {
+
+            Node theNode = null;
+            for (Node node : playerBox.getChildren()) {
+                if (node instanceof Ellipse) {
+                    theNode = node;
+                    break;
+                }
+            }
+            if (theNode != null) {playerBox.getChildren().remove(theNode); }
     }
 
     // Creates 7x7 grid and returns it
@@ -98,26 +167,16 @@ public class Gui extends Application{
         GridPane gridpane = new GridPane();
         gridpane.setPadding(new Insets(10,10,10,10));
 
-
         for(int i = 0; i < 7; i++){
             for(int j = 0; j < 7; j++){
                 cell[i][j] =  new Cell(i, j);
                 gridpane.add(cell[i][j], i, j);
             }
         }
-
         return gridpane;
     }
 
-
-
-
-
-
     public static void main(String[] args) {
         launch(args);
-
-
     }
-
 }
