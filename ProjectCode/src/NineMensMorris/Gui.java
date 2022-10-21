@@ -55,7 +55,7 @@ public class Gui extends Application{
         window.setScene(gamePage);
         myGame = new Game(singlePlayer.isSelected());
         myGame.updateGuiStatus();
-        //System.out.print("Single player game:" + myGame.isSinglePlayer());
+        //Sys\tem.out.print("Single player game:" + myGame.isSinglePlayer());
     }
 
     // this creates all the components on the menuPage
